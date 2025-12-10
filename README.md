@@ -27,7 +27,7 @@ A modern Django web application for GLAMORA beauty salon, featuring appointment 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/GLAMORA.git
+git clone https://github.com/CodeBase-05/GLAMORA.git
 cd GLAMORA
 ```
 
