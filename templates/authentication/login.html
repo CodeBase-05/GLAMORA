@@ -1,0 +1,386 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login - Glamora{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-left">
+        <div class="brand-section">
+            <img src="{% static 'images/LOGO-1.jpg' %}" alt="Glamora Logo" class="logo-image">
+        </div>
+    </div>
+    
+    <div class="login-right">
+        <div class="login-card">
+            <h2 class="login-title">Welcome Back</h2>
+            <p class="login-subtitle">Sign in to your Glamora account</p>
+            
+            <!-- User Type Selector (Compact Toggle) -->
+            <div class="user-type-selector">
+                <input type="radio" id="user_type_customer" name="user_type" value="customer" checked>
+                <label for="user_type_customer" class="user-type-option customer-option">
+                    <span class="user-type-text">Customer</span>
+                </label>
+                
+                <input type="radio" id="user_type_admin" name="user_type" value="admin">
+                <label for="user_type_admin" class="user-type-option admin-option">
+                    <span class="user-type-text">Manager</span>
+                </label>
+                
+                <div class="user-type-slider"></div>
+            </div>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                        <div class="login-error-message" id="loginErrorMessage">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            
+            <form method="POST" action="{% url 'login' %}" class="login-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="mobile" class="form-label">LOGIN ID</label>
+                    <div class="mobile-input-wrapper">
+                        <select id="country_code" name="country_code" class="country-code-select">
+                            <option value="+1" selected>+1 (US/CA)</option>
+                            <option value="+44">+44 (UK)</option>
+                            <option value="+91">+91 (IN)</option>
+                            <option value="+61">+61 (AU)</option>
+                            <option value="+49">+49 (DE)</option>
+                            <option value="+33">+33 (FR)</option>
+                            <option value="+81">+81 (JP)</option>
+                            <option value="+86">+86 (CN)</option>
+                            <option value="+971">+971 (AE)</option>
+                            <option value="+966">+966 (SA)</option>
+                        </select>
+                        <input 
+                            type="text" 
+                            id="mobile" 
+                            name="mobile" 
+                            class="form-input mobile-input" 
+                            placeholder="Enter your mobile number"
+                            inputmode="numeric"
+                            maxlength="14"
+                            oninput="validateMobileNumber(this)"
+                            required
+                        >
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">PASSWORD</label>
+                    <div class="password-input-wrapper">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="Enter your password"
+                            required
+                        >
+                        <span class="password-toggle" onclick="togglePassword('password')">
+                            <svg id="password-eye" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: block;">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg id="password-eye-slash" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="forgot-password-link">
+                    <a href="{% url 'forgot_password' %}">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="login-button">Login</button>
+            </form>
+            
+            <div class="signup-link" id="signupLink">
+                <a href="{% url 'signup' %}">Click here for new user</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword(fieldId) {
+    const passwordInput = document.getElementById(fieldId);
+    const eyeIcon = document.getElementById(fieldId + '-eye');
+    const eyeSlashIcon = document.getElementById(fieldId + '-eye-slash');
+    
+    if (passwordInput.getAttribute('type') === 'password') {
+        passwordInput.setAttribute('type', 'text');
+        if (eyeIcon) eyeIcon.style.display = 'none';
+        if (eyeSlashIcon) eyeSlashIcon.style.display = 'block';
+    } else {
+        passwordInput.setAttribute('type', 'password');
+        if (eyeIcon) eyeIcon.style.display = 'block';
+        if (eyeSlashIcon) eyeSlashIcon.style.display = 'none';
+    }
+}
+
+// Auto-resize country code select based on selected option
+function resizeCountryCode() {
+    const select = document.getElementById('country_code');
+    if (select) {
+        const selectedText = select.options[select.selectedIndex].textContent;
+        
+        const tempSpan = document.createElement('span');
+        tempSpan.style.visibility = 'hidden';
+        tempSpan.style.position = 'absolute';
+        tempSpan.style.whiteSpace = 'nowrap';
+        tempSpan.style.fontSize = window.getComputedStyle(select).fontSize;
+        tempSpan.style.fontFamily = window.getComputedStyle(select).fontFamily;
+        tempSpan.style.fontWeight = window.getComputedStyle(select).fontWeight;
+        tempSpan.textContent = selectedText;
+        
+        document.body.appendChild(tempSpan);
+        const textWidth = tempSpan.offsetWidth;
+        document.body.removeChild(tempSpan);
+        
+        const paddingLeft = 6;
+        const paddingRight = 25;
+        const totalWidth = textWidth + paddingLeft + paddingRight;
+        
+        const finalWidth = Math.max(70, Math.min(120, totalWidth));
+        select.style.width = finalWidth + 'px';
+    }
+}
+
+// Mobile number validation based on country code
+const countryCodeLengths = {
+    '+1': 10,
+    '+44': 10,
+    '+91': 10,
+    '+61': 9,
+    '+49': 11,
+    '+33': 9,
+    '+81': 10,
+    '+86': 11,
+    '+971': 9,
+    '+966': 9
+};
+
+function validateMobileNumber(input) {
+    let value = input.value.replace(/[^0-9]/g, '');
+    
+    const countryCode = document.getElementById('country_code').value;
+    const maxLength = countryCodeLengths[countryCode] || 15;
+    
+    if (countryCode === '+1' && value.length > 0) {
+        if (value.length > 10) {
+            value = value.substring(0, 10);
+        }
+        input.setAttribute('maxlength', 14);
+        
+        if (value.length <= 3) {
+            value = '(' + value;
+        } else if (value.length <= 6) {
+            value = '(' + value.substring(0, 3) + ')-' + value.substring(3);
+        } else {
+            value = '(' + value.substring(0, 3) + ')-' + value.substring(3, 6) + '-' + value.substring(6, 10);
+        }
+    } else {
+        input.setAttribute('maxlength', maxLength);
+    }
+    
+    input.value = value;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const select = document.getElementById('country_code');
+    if (select) {
+        resizeCountryCode();
+        const mobileInput = document.getElementById('mobile');
+        if (mobileInput) {
+            if (select.value === '+1') {
+                mobileInput.setAttribute('maxlength', 14);
+            } else {
+                const maxLength = countryCodeLengths[select.value] || 15;
+                mobileInput.setAttribute('maxlength', maxLength);
+            }
+        }
+        select.addEventListener('change', function() {
+            resizeCountryCode();
+            const mobileInput = document.getElementById('mobile');
+            if (mobileInput) {
+                if (select.value === '+1') {
+                    mobileInput.setAttribute('maxlength', 14);
+                } else {
+                    const maxLength = countryCodeLengths[select.value] || 15;
+                    mobileInput.setAttribute('maxlength', maxLength);
+                }
+                validateMobileNumber(mobileInput);
+            }
+        });
+    }
+    
+    const errorMessage = document.getElementById('loginErrorMessage');
+    if (errorMessage) {
+        const mobileInput = document.getElementById('mobile');
+        const passwordInput = document.getElementById('password');
+        const countryCodeSelect = document.getElementById('country_code');
+        
+        if (mobileInput) {
+            mobileInput.classList.add('error');
+        }
+        if (passwordInput) {
+            passwordInput.classList.add('error');
+        }
+        if (countryCodeSelect) {
+            countryCodeSelect.classList.add('error');
+        }
+        
+        setTimeout(function() {
+            errorMessage.style.opacity = '0';
+            errorMessage.style.transition = 'opacity 0.5s ease';
+            setTimeout(function() {
+                errorMessage.style.display = 'none';
+            }, 500);
+        }, 5000);
+        
+        if (mobileInput) {
+            mobileInput.addEventListener('input', function() {
+                this.classList.remove('error');
+                if (countryCodeSelect) {
+                    countryCodeSelect.classList.remove('error');
+                }
+            });
+        }
+        if (passwordInput) {
+            passwordInput.addEventListener('input', function() {
+                this.classList.remove('error');
+            });
+        }
+    }
+});
+
+// User Type Selector Animation
+document.addEventListener('DOMContentLoaded', function() {
+    const customerRadio = document.getElementById('user_type_customer');
+    const adminRadio = document.getElementById('user_type_admin');
+    const slider = document.querySelector('.user-type-slider');
+    const signupLink = document.getElementById('signupLink');
+    
+    function updateSlider() {
+        if (customerRadio.checked) {
+            slider.style.transform = 'translateX(0)';
+            if (signupLink) signupLink.style.display = 'block';
+        } else {
+            slider.style.transform = 'translateX(100%)';
+            if (signupLink) signupLink.style.display = 'none';
+        }
+    }
+    
+    customerRadio.addEventListener('change', updateSlider);
+    adminRadio.addEventListener('change', updateSlider);
+    updateSlider();
+});
+</script>
+
+<style>
+/* User Type Selector Styles - Compact and Creative */
+.user-type-selector {
+    position: relative;
+    display: flex;
+    background: #f0f0f0;
+    border-radius: 8px;
+    padding: 3px;
+    margin: 15px auto 20px auto;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    width: auto;
+    min-width: 200px;
+    justify-content: center;
+}
+
+.user-type-selector input[type="radio"] {
+    display: none;
+}
+
+.user-type-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
+    position: relative;
+    font-weight: 500;
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+    flex: 1;
+    text-align: center;
+}
+
+.user-type-option:hover {
+    color: #333;
+}
+
+.user-type-selector input[type="radio"]:checked + .user-type-option {
+    color: white;
+    font-weight: 600;
+}
+
+.user-type-text {
+    font-size: 13px;
+    letter-spacing: 0.3px;
+    text-align: center;
+    width: 100%;
+}
+
+.user-type-slider {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: calc(50% - 3px);
+    height: calc(100% - 6px);
+    background: linear-gradient(135deg, #603D44 0%, #8B5A6B 100%);
+    border-radius: 6px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(96, 61, 68, 0.25);
+    z-index: 1;
+}
+
+.user-type-selector input[type="radio"]:checked + .customer-option {
+    color: white;
+}
+
+.user-type-selector input[type="radio"]:checked + .admin-option {
+    color: white;
+}
+
+/* Adjust form spacing */
+.login-form {
+    margin-top: 5px;
+}
+
+.forgot-password-link {
+    text-align: right;
+    margin-bottom: 15px;
+    margin-top: -5px;
+}
+
+.forgot-password-link a {
+    color: #603D44;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.forgot-password-link a:hover {
+    text-decoration: underline;
+}
+</style>
+{% endblock %}
+

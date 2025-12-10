@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Confirmation - Glamora{% endblock %}
+
+{% block content %}
+<div class="homepage-wrapper">
+    <header class="main-header">
+        <div class="header-left">
+            <button class="hamburger-menu" onclick="toggleSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <a href="{% url 'home' %}" class="logo-section-header" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" class="logo-favicon">
+                <span class="logo-text-header">GLAMORA</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav" id="mainNav">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="{% url 'services' %}" class="nav-link">Services</a>
+                <a href="{% url 'my_bookings' %}" class="nav-link">My Bookings</a>
+                <a href="{% url 'my_receipts' %}" class="nav-link">My Receipts</a>
+                <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <main class="main-content" style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+            <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center;">
+                <div style="width: 80px; height: 80px; margin: 0 auto 30px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                
+                <h1 style="font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 20px;">Payment Successful!</h1>
+                <p style="font-size: 1.1rem; color: #666; margin-bottom: 30px;">Your payment has been processed successfully.</p>
+                
+                <div style="background: #f5f5f5; padding: 25px; border-radius: 10px; margin-bottom: 30px; text-align: left;">
+                    <h2 style="font-size: 1.2rem; font-weight: bold; color: #333; margin-bottom: 15px; text-align: center;">Payment Details</h2>
+                    <div style="display: flex; justify-content: space-between; margin: 12px 0; padding-bottom: 12px; border-bottom: 1px solid #e0e0e0;">
+                        <span style="color: #666; font-weight: 500;">Service:</span>
+                        <span style="color: #333; font-weight: bold;">{{ pending_booking.service_name }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 12px 0; padding-bottom: 12px; border-bottom: 1px solid #e0e0e0;">
+                        <span style="color: #666; font-weight: 500;">Amount:</span>
+                        <span style="color: #333; font-weight: bold;">{{ pending_booking.service_price }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 12px 0; padding-bottom: 12px; border-bottom: 1px solid #e0e0e0;">
+                        <span style="color: #666; font-weight: 500;">Payment Method:</span>
+                        <span style="color: #333; font-weight: bold;">{{ payment_method_display }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 12px 0; padding-bottom: 12px; border-bottom: 1px solid #e0e0e0;">
+                        <span style="color: #666; font-weight: 500;">Card Ending:</span>
+                        <span style="color: #333; font-weight: bold;">****{{ payment_data.card_number }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 12px 0;">
+                        <span style="color: #666; font-weight: 500;">Date:</span>
+                        <span style="color: #333; font-weight: bold;">{{ payment_date }}</span>
+                    </div>
+                </div>
+                
+                <p style="font-size: 1rem; color: #666; margin-bottom: 20px;">Please continue to provide your address to complete the booking.</p>
+                <a href="{% url 'address' %}" style="display: inline-block; background: #603D44; color: white; padding: 15px 40px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem; transition: background 0.3s;" onmouseover="this.style.background='#4a2f35'" onmouseout="this.style.background='#603D44'">
+                    Continue to Address
+                </a>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    // Auto-redirect after 5 seconds (optional)
+    // setTimeout(function() {
+    //     window.location.href = "{% url 'address' %}";
+    // }, 5000);
+</script>
+{% endblock %}
+

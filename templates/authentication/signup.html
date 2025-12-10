@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Up - Glamora{% endblock %}
+
+{% block content %}
+<div class="signup-container">
+    <div class="signup-content">
+        <div class="signup-left">
+            <div class="logo-section">
+                <img src="{% static 'images/LOGO-1.jpg' %}" alt="Glamora Logo" class="signup-logo-image">
+            </div>
+        </div>
+        
+        <div class="signup-right">
+            <div class="signup-card">
+                <h2 class="signup-title">Create Account</h2>
+                <p class="signup-subtitle">Join Glamora Today!!</p>
+                
+                <form method="POST" action="{% url 'signup' %}" class="signup-form">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="first_name" class="form-label">First Name</label>
+                        <input 
+                            type="text" 
+                            id="first_name" 
+                            name="first_name" 
+                            class="form-input" 
+                            placeholder="Enter your first name"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="last_name" class="form-label">Last Name</label>
+                        <input 
+                            type="text" 
+                            id="last_name" 
+                            name="last_name" 
+                            class="form-input" 
+                            placeholder="Enter your last name"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mobile" class="form-label">Mobile Number</label>
+                        <div class="mobile-input-wrapper">
+                            <select id="country_code" name="country_code" class="country-code-select">
+                                <option value="+1" selected>+1 (US/CA)</option>
+                                <option value="+44">+44 (UK)</option>
+                                <option value="+91">+91 (IN)</option>
+                                <option value="+61">+61 (AU)</option>
+                                <option value="+49">+49 (DE)</option>
+                                <option value="+33">+33 (FR)</option>
+                                <option value="+81">+81 (JP)</option>
+                                <option value="+86">+86 (CN)</option>
+                                <option value="+971">+971 (AE)</option>
+                                <option value="+966">+966 (SA)</option>
+                            </select>
+                            <input 
+                                type="text" 
+                                id="mobile" 
+                                name="mobile" 
+                                class="form-input mobile-input" 
+                                placeholder="Enter your mobile number"
+                                inputmode="numeric"
+                                maxlength="14"
+                                oninput="validateMobileNumber(this)"
+                                required
+                            >
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">PASSWORD</label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                class="form-input" 
+                                placeholder="Enter your password"
+                                required
+                            >
+                            <span class="password-toggle" onclick="togglePassword('password')">
+                                <svg id="password-eye" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: block;">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <svg id="password-eye-slash" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm_password" class="form-label">CONFIRM PASSWORD</label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="confirm_password" 
+                                name="confirm_password" 
+                                class="form-input" 
+                                placeholder="Confirm your password"
+                                required
+                            >
+                            <span class="password-toggle" onclick="togglePassword('confirm_password')">
+                                <svg id="confirm_password-eye" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: block;">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <svg id="confirm_password-eye-slash" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="signup-button">Create Account</button>
+                </form>
+                
+                <div class="login-link">
+                    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword(fieldId) {
+    const passwordInput = document.getElementById(fieldId);
+    const eyeIcon = document.getElementById(fieldId + '-eye');
+    const eyeSlashIcon = document.getElementById(fieldId + '-eye-slash');
+    
+    if (passwordInput.getAttribute('type') === 'password') {
+        passwordInput.setAttribute('type', 'text');
+        if (eyeIcon) eyeIcon.style.display = 'none';
+        if (eyeSlashIcon) eyeSlashIcon.style.display = 'block';
+    } else {
+        passwordInput.setAttribute('type', 'password');
+        if (eyeIcon) eyeIcon.style.display = 'block';
+        if (eyeSlashIcon) eyeSlashIcon.style.display = 'none';
+    }
+}
+
+// Auto-resize country code select based on selected option
+function resizeCountryCode() {
+    const select = document.getElementById('country_code');
+    if (select) {
+        const selectedText = select.options[select.selectedIndex].textContent;
+        
+        // Create a temporary span to measure text width
+        const tempSpan = document.createElement('span');
+        tempSpan.style.visibility = 'hidden';
+        tempSpan.style.position = 'absolute';
+        tempSpan.style.whiteSpace = 'nowrap';
+        tempSpan.style.fontSize = window.getComputedStyle(select).fontSize;
+        tempSpan.style.fontFamily = window.getComputedStyle(select).fontFamily;
+        tempSpan.style.fontWeight = window.getComputedStyle(select).fontWeight;
+        tempSpan.textContent = selectedText;
+        
+        document.body.appendChild(tempSpan);
+        const textWidth = tempSpan.offsetWidth;
+        document.body.removeChild(tempSpan);
+        
+        // Calculate total width: text width + left padding + right padding + arrow space
+        const paddingLeft = 6;
+        const paddingRight = 25; // Includes arrow space
+        const totalWidth = textWidth + paddingLeft + paddingRight;
+        
+        // Set width with min and max constraints
+        const finalWidth = Math.max(70, Math.min(120, totalWidth));
+        select.style.width = finalWidth + 'px';
+    }
+}
+
+// Mobile number validation based on country code
+const countryCodeLengths = {
+    '+1': 10,   // US/CA: 10 digits
+    '+44': 10,  // UK: 10 digits
+    '+91': 10,  // India: 10 digits
+    '+61': 9,   // Australia: 9 digits
+    '+49': 11,  // Germany: 11 digits
+    '+33': 9,   // France: 9 digits
+    '+81': 10,  // Japan: 10 digits
+    '+86': 11,  // China: 11 digits
+    '+971': 9,  // UAE: 9 digits
+    '+966': 9   // Saudi Arabia: 9 digits
+};
+
+function validateMobileNumber(input) {
+    // Remove any non-numeric characters
+    let value = input.value.replace(/[^0-9]/g, '');
+    
+    // Get selected country code and set max length
+    const countryCode = document.getElementById('country_code').value;
+    const maxLength = countryCodeLengths[countryCode] || 15;
+    
+    // Format as (123)-456-7890 for US/CA (+1)
+    if (countryCode === '+1' && value.length > 0) {
+        // Limit to 10 digits for US format
+        if (value.length > 10) {
+            value = value.substring(0, 10);
+        }
+        // Set maxlength to 14 for formatted US number: (123)-456-7890
+        input.setAttribute('maxlength', 14);
+        
+        if (value.length <= 3) {
+            value = '(' + value;
+        } else if (value.length <= 6) {
+            value = '(' + value.substring(0, 3) + ')-' + value.substring(3);
+        } else {
+            value = '(' + value.substring(0, 3) + ')-' + value.substring(3, 6) + '-' + value.substring(6, 10);
+        }
+    } else {
+        // For other countries, set maxlength based on country code
+        input.setAttribute('maxlength', maxLength);
+    }
+    
+    input.value = value;
+}
+
+// Resize on load and change
+document.addEventListener('DOMContentLoaded', function() {
+    const select = document.getElementById('country_code');
+    if (select) {
+        resizeCountryCode();
+        // Set initial maxlength
+        const mobileInput = document.getElementById('mobile');
+        if (mobileInput) {
+            if (select.value === '+1') {
+                mobileInput.setAttribute('maxlength', 14); // For formatted US number
+            } else {
+                const maxLength = countryCodeLengths[select.value] || 15;
+                mobileInput.setAttribute('maxlength', maxLength);
+            }
+        }
+        select.addEventListener('change', function() {
+            resizeCountryCode();
+            // Update mobile input maxlength when country code changes
+            const mobileInput = document.getElementById('mobile');
+            if (mobileInput) {
+                if (select.value === '+1') {
+                    mobileInput.setAttribute('maxlength', 14); // For formatted US number
+                } else {
+                    const maxLength = countryCodeLengths[select.value] || 15;
+                    mobileInput.setAttribute('maxlength', maxLength);
+                }
+                // Clear and validate existing input
+                validateMobileNumber(mobileInput);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+

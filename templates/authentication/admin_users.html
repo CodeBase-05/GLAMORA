@@ -1,0 +1,495 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manager Users - Glamora{% endblock %}
+
+{% block content %}
+<div class="homepage-wrapper">
+    <header class="main-header">
+        <div class="header-left">
+            <a href="{% url 'admin_home' %}" class="logo-section-header" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" class="logo-favicon">
+                <span class="logo-text-header">GLAMORA</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav" id="mainNav">
+                <a href="{% url 'admin_home' %}" class="nav-link">Home</a>
+                <a href="{% url 'admin_services' %}" class="nav-link">Services</a>
+                <a href="{% url 'admin_users' %}" class="nav-link active">Users</a>
+                <a href="{% url 'admin_appointments' %}" class="nav-link">Appointments</a>
+                <a href="{% url 'admin_sales' %}" class="nav-link">Sales</a>
+                <a href="{% url 'logout' %}" class="nav-link" style="color: #dc3545;">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <main class="main-content">
+            <div class="services-page-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>Users Management</h1>
+                    <p>Manage customers, employees, and managers</p>
+                </div>
+            </div>
+
+            <div style="background: white; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                <div style="display: flex; border-bottom: 2px solid #f0f0f0;">
+                    <button onclick="switchTab('customers')" id="tab-customers" class="user-tab-btn" style="flex: 1; padding: 15px; background: none; border: none; cursor: pointer; font-weight: 600; font-size: 14px; color: #666; border-bottom: 3px solid transparent;">
+                        Customers
+                    </button>
+                    <button onclick="switchTab('employees')" id="tab-employees" class="user-tab-btn" style="flex: 1; padding: 15px; background: none; border: none; cursor: pointer; font-weight: 600; font-size: 14px; color: #666; border-bottom: 3px solid transparent;">
+                        Employees
+                    </button>
+                    <button onclick="switchTab('admins')" id="tab-admins" class="user-tab-btn" style="flex: 1; padding: 15px; background: none; border: none; cursor: pointer; font-weight: 600; font-size: 14px; color: #666; border-bottom: 3px solid transparent;">
+                        Manager
+                    </button>
+                </div>
+
+                <div id="tab-content-customers" class="tab-content" style="display: none; padding: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0; font-size: 1.3rem;">Customers</h2>
+                        <button onclick="openAddUserModal('customer')" style="background: linear-gradient(135deg, #603D44 0%, #8B5A6B 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Add Customer
+                        </button>
+                    </div>
+                    {% if customers %}
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">ID</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Name</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Mobile</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Address</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Registered</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for customer in customers %}
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 12px;">{{ customer.id }}</td>
+                                    <td style="padding: 12px;">{{ customer.first_name }} {{ customer.last_name }}</td>
+                                    <td style="padding: 12px;">{{ customer.mobile }}</td>
+                                    <td style="padding: 12px;">{{ customer.address }}</td>
+                                    <td style="padding: 12px;">{{ customer.created_at|date:"M d, Y" }}</td>
+                                    <td style="padding: 12px;">
+                                        <button class="edit-user-btn" data-user-type="customer" data-user-id="{{ customer.id }}" style="background: #4a90e2; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px;">Edit</button>
+                                        <button class="delete-user-btn" data-user-type="customer" data-user-id="{{ customer.id }}" data-user-name="{{ customer.first_name }} {{ customer.last_name }}" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Delete</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p style="color: #666; text-align: center; padding: 20px;">No customers found.</p>
+                    {% endif %}
+                </div>
+
+                <div id="tab-content-employees" class="tab-content" style="display: none; padding: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0; font-size: 1.3rem;">Employees</h2>
+                        <button onclick="openAddUserModal('employee')" style="background: linear-gradient(135deg, #603D44 0%, #8B5A6B 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Add Employee
+                        </button>
+                    </div>
+                    {% if employees %}
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">ID</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Name</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Phone</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Skills</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Rating</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Availability</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for employee in employees %}
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 12px;">{{ employee.id }}</td>
+                                    <td style="padding: 12px;">{{ employee.first_name }} {{ employee.last_name }}</td>
+                                    <td style="padding: 12px;">{{ employee.phone }}</td>
+                                    <td style="padding: 12px;">{{ employee.skills }}</td>
+                                    <td style="padding: 12px;">{{ employee.rating|floatformat:2 }}★</td>
+                                    <td style="padding: 12px;">
+                                        <span class="availability-badge" data-availability="{{ employee.availability }}" style="padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+                                            {{ employee.availability|title }}
+                                        </span>
+                                    </td>
+                                    <td style="padding: 12px;">
+                                        <button class="edit-user-btn" data-user-type="employee" data-user-id="{{ employee.id }}" style="background: #4a90e2; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px;">Edit</button>
+                                        <button class="delete-user-btn" data-user-type="employee" data-user-id="{{ employee.id }}" data-user-name="{{ employee.first_name }} {{ employee.last_name }}" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Delete</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p style="color: #666; text-align: center; padding: 20px;">No employees found.</p>
+                    {% endif %}
+                </div>
+
+                <div id="tab-content-admins" class="tab-content" style="display: none; padding: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0; font-size: 1.3rem;">Manager</h2>
+                        <button onclick="openAddUserModal('admin')" style="background: linear-gradient(135deg, #603D44 0%, #8B5A6B 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Add Manager
+                        </button>
+                    </div>
+                    {% if admins %}
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">ID</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Name</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Mobile</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Role</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Registered</th>
+                                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for admin in admins %}
+                                <tr style="border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 12px;">{{ admin.id }}</td>
+                                    <td style="padding: 12px;">{{ admin.first_name }} {{ admin.last_name }}</td>
+                                    <td style="padding: 12px;">{{ admin.mobile }}</td>
+                                    <td style="padding: 12px;">{{ admin.role }}</td>
+                                    <td style="padding: 12px;">{{ admin.created_at|date:"M d, Y" }}</td>
+                                    <td style="padding: 12px;">
+                                        <button class="edit-user-btn" data-user-type="admin" data-user-id="{{ admin.id }}" style="background: #4a90e2; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px;">Edit</button>
+                                        <button class="delete-user-btn" data-user-type="admin" data-user-id="{{ admin.id }}" data-user-name="{{ admin.first_name }} {{ admin.last_name }}" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Delete</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p style="color: #666; text-align: center; padding: 20px;">No managers found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div id="userModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 id="userModalTitle" style="margin: 0; color: #333;">Add User</h2>
+            <button onclick="closeUserModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">&times;</button>
+        </div>
+        <form id="userForm" method="POST">
+            {% csrf_token %}
+            <input type="hidden" id="userType" name="user_type">
+            <input type="hidden" id="userId" name="user_id">
+            <div id="userFormFields"></div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button type="button" onclick="closeUserModal()" style="background: #f0f0f0; color: #333; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">Cancel</button>
+                <button type="submit" style="background: linear-gradient(135deg, #603D44 0%, #8B5A6B 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const activeTab = '{{ active_tab }}';
+
+function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.style.display = 'none';
+    });
+    document.querySelectorAll('.user-tab-btn').forEach(btn => {
+        btn.style.color = '#666';
+        btn.style.borderBottom = '3px solid transparent';
+    });
+    
+    document.getElementById(`tab-content-${tab}`).style.display = 'block';
+    const btn = document.getElementById(`tab-${tab}`);
+    btn.style.color = '#603D44';
+    btn.style.borderBottom = '3px solid #603D44';
+    
+    window.history.pushState({}, '', `?tab=${tab}`);
+}
+if (activeTab) {
+    switchTab(activeTab);
+} else {
+    switchTab('customers');
+}
+
+function openAddUserModal(userType) {
+    document.getElementById('userModal').style.display = 'flex';
+    document.getElementById('userType').value = userType;
+    document.getElementById('userId').value = '';
+    document.getElementById('userModalTitle').textContent = `Add ${userType.charAt(0).toUpperCase() + userType.slice(1)}`;
+    document.getElementById('userForm').action = `{% url 'admin_add_user' %}`;
+    
+    let fields = '';
+    if (userType === 'customer') {
+        fields = `
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">First Name *</label>
+                <input type="text" name="first_name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Last Name *</label>
+                <input type="text" name="last_name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Mobile Number *</label>
+                <input type="text" name="mobile" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">PASSWORD *</label>
+                <input type="password" name="password" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Address</label>
+                <textarea name="address" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical;"></textarea>
+            </div>
+        `;
+    } else if (userType === 'employee') {
+        fields = `
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">First Name *</label>
+                <input type="text" name="first_name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Last Name *</label>
+                <input type="text" name="last_name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Phone *</label>
+                <input type="text" name="phone" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Address</label>
+                <textarea name="address" rows="2" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical;"></textarea>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Skills</label>
+                <input type="text" name="skills" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Rating</label>
+                <input type="number" name="rating" step="0.01" min="0" max="5" value="0" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Availability *</label>
+                <select name="availability" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    <option value="available">Available</option>
+                    <option value="busy">Busy</option>
+                    <option value="unavailable">Unavailable</option>
+                </select>
+            </div>
+        `;
+    } else if (userType === 'admin') {
+        fields = `
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">First Name *</label>
+                <input type="text" name="first_name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Last Name *</label>
+                <input type="text" name="last_name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Mobile Number *</label>
+                <input type="text" name="mobile" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Role *</label>
+                <input type="text" name="role" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" placeholder="e.g., Studio Manager, Assistant Manager">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">PASSWORD *</label>
+                <input type="password" name="password" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+        `;
+    }
+    document.getElementById('userFormFields').innerHTML = fields;
+}
+
+function editUser(userType, userId) {
+    fetch(`/admin/get-user/${userType}/${userId}/`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('userModal').style.display = 'flex';
+            document.getElementById('userType').value = userType;
+            document.getElementById('userId').value = userId;
+            document.getElementById('userModalTitle').textContent = `Edit ${userType.charAt(0).toUpperCase() + userType.slice(1)}`;
+            document.getElementById('userForm').action = `{% url 'admin_edit_user' %}`;
+            
+            let fields = '';
+            if (userType === 'customer') {
+                fields = `
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">First Name *</label>
+                        <input type="text" name="first_name" value="${data.first_name || ''}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Last Name *</label>
+                        <input type="text" name="last_name" value="${data.last_name || ''}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Mobile Number *</label>
+                        <input type="text" name="mobile" value="${data.mobile || ''}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">PASSWORD (leave blank to keep current)</label>
+                        <input type="password" name="password" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Address</label>
+                        <textarea name="address" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical;">${data.address || ''}</textarea>
+                    </div>
+                `;
+            } else if (userType === 'employee') {
+                fields = `
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">First Name *</label>
+                        <input type="text" name="first_name" value="${data.first_name || ''}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Last Name *</label>
+                        <input type="text" name="last_name" value="${data.last_name || ''}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Phone *</label>
+                        <input type="text" name="phone" value="${data.phone || ''}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Address</label>
+                        <textarea name="address" rows="2" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical;">${data.address || ''}</textarea>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Skills</label>
+                        <input type="text" name="skills" value="${data.skills || ''}" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Rating</label>
+                        <input type="number" name="rating" step="0.01" min="0" max="5" value="${data.rating || 0}" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Availability *</label>
+                        <select name="availability" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                            <option value="available" ${data.availability === 'available' ? 'selected' : ''}>Available</option>
+                            <option value="busy" ${data.availability === 'busy' ? 'selected' : ''}>Busy</option>
+                            <option value="unavailable" ${data.availability === 'unavailable' ? 'selected' : ''}>Unavailable</option>
+                        </select>
+                    </div>
+                `;
+            } else if (userType === 'admin') {
+                fields = `
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">First Name *</label>
+                        <input type="text" name="first_name" value="${data.first_name || ''}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Last Name *</label>
+                        <input type="text" name="last_name" value="${data.last_name || ''}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Mobile Number *</label>
+                        <input type="text" name="mobile" value="${data.mobile || ''}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Role *</label>
+                        <input type="text" name="role" value="${data.role || ''}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">PASSWORD (leave blank to keep current)</label>
+                        <input type="password" name="password" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    </div>
+                `;
+            }
+            document.getElementById('userFormFields').innerHTML = fields;
+        })
+        .catch(error => {
+            alert('Error loading user details');
+        });
+}
+
+function closeUserModal() {
+    document.getElementById('userModal').style.display = 'none';
+}
+
+function deleteUser(userType, userId, userName) {
+    if (confirm(`Are you sure you want to delete "${userName}"?`)) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "admin_delete_user" %}';
+        
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = 'csrfmiddlewaretoken';
+        csrf.value = '{{ csrf_token }}';
+        form.appendChild(csrf);
+        
+        const typeInput = document.createElement('input');
+        typeInput.type = 'hidden';
+        typeInput.name = 'user_type';
+        typeInput.value = userType;
+        form.appendChild(typeInput);
+        
+        const idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'user_id';
+        idInput.value = userId;
+        form.appendChild(idInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.edit-user-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            editUser(this.getAttribute('data-user-type'), this.getAttribute('data-user-id'));
+        });
+    });
+    
+    document.querySelectorAll('.delete-user-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            deleteUser(this.getAttribute('data-user-type'), this.getAttribute('data-user-id'), this.getAttribute('data-user-name'));
+        });
+    });
+});
+</script>
+<style>
+.availability-badge[data-availability="available"] {
+    background: #d4edda;
+    color: #155724;
+}
+.availability-badge[data-availability="busy"] {
+    background: #fff3cd;
+    color: #856404;
+}
+.availability-badge[data-availability]:not([data-availability="available"]):not([data-availability="busy"]) {
+    background: #f8d7da;
+    color: #721c24;
+}
+</style>
+{% endblock %}

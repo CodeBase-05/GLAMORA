@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment - Glamora{% endblock %}
+
+{% block content %}
+<div class="homepage-wrapper">
+    <header class="main-header">
+        <div class="header-left">
+            <button class="hamburger-menu" onclick="toggleSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <a href="{% url 'home' %}" class="logo-section-header" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" class="logo-favicon">
+                <span class="logo-text-header">GLAMORA</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav" id="mainNav">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="{% url 'services' %}" class="nav-link">Services</a>
+                <a href="{% url 'my_bookings' %}" class="nav-link">My Bookings</a>
+                <a href="{% url 'my_receipts' %}" class="nav-link">My Receipts</a>
+                <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <main class="main-content" style="max-width: 800px; margin: 0 auto; padding: 40px 20px;">
+            <h1 style="font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 30px; text-align: center;">Payment</h1>
+            
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+                <h2 style="font-size: 1.2rem; font-weight: bold; color: #333; margin-bottom: 15px;">Booking Summary</h2>
+                <p style="margin: 8px 0;"><strong>Service:</strong> {{ pending_booking.service_name }}</p>
+                <p style="margin: 8px 0;"><strong>Price:</strong> {{ pending_booking.service_price }}</p>
+                <p style="margin: 8px 0;"><strong>Date:</strong> {{ pending_booking.formatted_date }}</p>
+                <p style="margin: 8px 0;"><strong>Time:</strong> {{ pending_booking.booking_time }}</p>
+            </div>
+
+            <form method="POST" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                {% csrf_token %}
+                
+                <h2 style="font-size: 1.5rem; font-weight: bold; color: #333; margin-bottom: 25px;">Payment Method</h2>
+                
+                <div id="cardTypeSection" style="margin-bottom: 25px;">
+                    <label style="display: block; font-weight: bold; color: #000; margin-bottom: 15px; font-size: 1rem;">Card Type <span style="color: red;">*</span></label>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <label style="flex: 1; min-width: 150px; padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s;" onmouseover="this.style.borderColor='#603D44'" onmouseout="this.style.borderColor='#e0e0e0'">
+                            <input type="radio" name="card_type" value="credit" id="creditCard" style="margin-right: 8px;" required>
+                            Credit Card
+                        </label>
+                        <label style="flex: 1; min-width: 150px; padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s;" onmouseover="this.style.borderColor='#603D44'" onmouseout="this.style.borderColor='#e0e0e0'">
+                            <input type="radio" name="card_type" value="debit" id="debitCard" style="margin-right: 8px;" required>
+                            Debit Card
+                        </label>
+                    </div>
+                    <small style="color: #666; display: block; margin-top: 8px;">Please select one card type</small>
+                </div>
+
+                <div id="cardDetails" style="margin-top: 25px;">
+                    <h3 style="font-size: 1.2rem; font-weight: bold; color: #333; margin-bottom: 20px;">Card Details</h3>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: bold; color: #000; margin-bottom: 8px; font-size: 1rem;">Card Number <span style="color: red;">*</span></label>
+                        <input type="text" name="card_number" id="card_number" placeholder="1234 5678 9012 3456" maxlength="19" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        <input type="hidden" name="raw_card_number" id="raw_card_number" value="">
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: bold; color: #000; margin-bottom: 8px; font-size: 1rem;">Card Holder Name <span style="color: red;">*</span></label>
+                        <input type="text" name="card_holder" id="card_holder" placeholder="John Doe" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div>
+                            <label style="display: block; font-weight: bold; color: #000; margin-bottom: 8px; font-size: 1rem;">Expiry Date <span style="color: red;">*</span></label>
+                            <input type="text" name="expiry_date" id="expiry_date" placeholder="MM/YY" maxlength="5" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-weight: bold; color: #000; margin-bottom: 8px; font-size: 1rem;">CVV <span style="color: red;">*</span></label>
+                            <input type="text" name="cvv" id="cvv" placeholder="123" maxlength="4" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <a href="{% url 'booking' %}?service={{ pending_booking.service_name|urlencode }}&price={{ pending_booking.service_price|urlencode }}&description={{ pending_booking.service_description|urlencode }}" style="flex: 1; padding: 14px; background-color: #e0e0e0; color: #333; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none;">
+                        Back
+                    </a>
+                    <button type="submit" style="flex: 1; padding: 14px; background-color: #603D44; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">
+                        Continue to Address
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cardNumberInput = document.getElementById('card_number');
+    const rawCardNumberInput = document.getElementById('raw_card_number');
+    
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function(e) {
+            if (!this.disabled) {
+                let value = e.target.value.replace(/\s/g, '');
+                let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                e.target.value = formattedValue;
+                
+                if (rawCardNumberInput) {
+                    rawCardNumberInput.value = value;
+                }
+            }
+        });
+        
+        const paymentForm = cardNumberInput.closest('form');
+        if (paymentForm) {
+            paymentForm.addEventListener('submit', function(e) {
+                if (cardNumberInput && !cardNumberInput.disabled) {
+                    const rawValue = cardNumberInput.value.replace(/\s/g, '').replace(/\*/g, '').replace(/-/g, '');
+                    if (rawCardNumberInput) {
+                        rawCardNumberInput.value = rawValue;
+                    }
+                }
+            });
+        }
+    }
+    
+    const expiryInput = document.getElementById('expiry_date');
+    if (expiryInput) {
+        expiryInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+    }
+    
+    const cvvInput = document.getElementById('cvv');
+    if (cvvInput) {
+        cvvInput.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+    }
+});
+
+function toggleSidebar() {
+}
+</script>
+{% endblock %}

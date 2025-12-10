@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - Glamora{% endblock %}
+
+{% block content %}
+<div class="homepage-wrapper">
+    <header class="main-header">
+        <div class="header-left">
+            <button class="hamburger-menu" onclick="toggleSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <a href="{% url 'home' %}" class="logo-section-header" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" class="logo-favicon">
+                <span class="logo-text-header">GLAMORA</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <button class="search-icon" id="searchIcon" onclick="toggleSearch()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </button>
+            <div class="search-bar" id="searchBar">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon-inside" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search for services..." class="search-input" oninput="showSuggestions()" onkeypress="handleSearchKeyPress(event)">
+                    <button class="search-submit-btn" onclick="performSearch()" type="button">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="search-suggestions" id="searchSuggestions"></div>
+            </div>
+            <nav class="main-nav" id="mainNav">
+                <a href="{% url 'home' %}" class="nav-link active">Home</a>
+                <a href="{% url 'services' %}" class="nav-link">Services</a>
+                <a href="{% url 'my_bookings' %}" class="nav-link">My Bookings</a>
+                <a href="{% url 'my_receipts' %}" class="nav-link">My Receipts</a>
+                <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+        
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Categories</h2>
+                <button class="close-sidebar" onclick="toggleSidebar()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <ul class="category-list">
+                <li class="category-item" onclick="selectCategory('deals')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                        <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                    </svg>
+                    <span>Deals</span>
+                </li>
+                <li class="category-item" onclick="selectCategory('hair')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <path d="M6 18v-7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v7"></path>
+                    </svg>
+                    <span>Hair</span>
+                </li>
+                <li class="category-item" onclick="selectCategory('waxing')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    <span>Waxing</span>
+                </li>
+                <li class="category-item" onclick="selectCategory('threading')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span>Threading</span>
+                </li>
+                <li class="category-item" onclick="selectCategory('facial')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <span>Facial</span>
+                </li>
+                <li class="category-item" onclick="selectCategory('nails')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Nails</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="{% url 'logout' %}" class="logout-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="welcome-banner">
+                <div class="banner-content">
+                    <h1>Welcome to Glamora</h1>
+                    <p>Book your beauty services with ease and convenience at your Home </p>
+                </div>
+                <div class="banner-stats">
+                    <div class="stat-box">
+                        <div class="stat-number">{{ total_services }}+</div>
+                        <div class="stat-label">Services</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">10+</div>
+                        <div class="stat-label">Happy Clients</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">4.8★</div>
+                        <div class="stat-label">Rating</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <section class="popular-services">
+                <h2 class="section-title">Popular Services</h2>
+                <div class="services-grid" id="servicesGrid">
+                    {% if popular_services %}
+                        {% for service in popular_services %}
+                        <div class="service-card" data-category="{{ service.category|lower }}">
+                            {% if service.discount %}
+                                <div class="discount-badge">{{ service.discount }}</div>
+                            {% endif %}
+                            <div class="service-image">
+                                {% if service.image %}
+                                    <img src="{{ service.image }}" alt="{{ service.name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                                {% else %}
+                                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#603D44" stroke-width="1.5">
+                                        <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                        <path d="M6 18v-7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v7"></path>
+                                    </svg>
+                                {% endif %}
+                            </div>
+                            <div class="service-details">
+                                <h3 class="service-name">{{ service.name }}</h3>
+                                <p class="service-description">{{ service.description }}</p>
+                                <div class="service-price">
+                                    {% if service.original_price %}
+                                        <span style="text-decoration: line-through; color: #999; font-size: 0.9rem; margin-right: 8px;">{{ service.original_price }}</span>
+                                    {% endif %}
+                                    <span>{{ service.price }}</span>
+                                </div>
+                                <button class="book-btn" onclick="bookService('{{ service.name|escapejs }}', '{{ service.price }}', '{{ service.description|escapejs }}')">Book Appointment</button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div style="grid-column: 1 / -1; text-align: center;">
+                            <p style="font-size: 1.1rem; color: #666;">Services will appear here once they are added.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const mainLayout = document.querySelector('.main-layout');
+    
+    sidebar.classList.toggle('active');
+    
+    if (sidebar.classList.contains('active')) {
+        if (overlay) {
+            overlay.classList.add('active');
+        }
+        if (mainLayout) {
+            mainLayout.classList.add('sidebar-open');
+        }
+    } else {
+        if (overlay) {
+            overlay.classList.remove('active');
+        }
+        if (mainLayout) {
+            mainLayout.classList.remove('sidebar-open');
+        }
+    }
+}
+
+// Close sidebar when clicking on overlay
+document.addEventListener('click', function(event) {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const hamburger = document.querySelector('.hamburger-menu');
+    
+    // Check if sidebar is active and click is on overlay (not on sidebar or hamburger)
+    if (sidebar && sidebar.classList.contains('active')) {
+        if (overlay && overlay.contains(event.target) && !sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+            toggleSidebar();
+        }
+    }
+});
+
+function selectCategory(category) {
+    // Navigate to services page with category parameter
+    window.location.href = "{% url 'services' %}?category=" + category;
+}
+
+// Filter functions removed - filtering now happens on services page only
+
+// Available services for suggestions (fetched from database or fallback)
+const services = JSON.parse('{{ search_suggestions_json|escapejs }}');
+
+function toggleSearch() {
+    const searchBar = document.getElementById('searchBar');
+    const searchIcon = document.getElementById('searchIcon');
+    
+    searchBar.classList.toggle('active');
+    
+    if (searchBar.classList.contains('active')) {
+        searchIcon.classList.add('hidden');
+        document.getElementById('searchInput').focus();
+    } else {
+        searchIcon.classList.remove('hidden');
+        document.getElementById('searchInput').value = '';
+        hideSuggestions();
+    }
+}
+
+function showSuggestions() {
+    const searchInput = document.getElementById('searchInput');
+    const suggestionsDiv = document.getElementById('searchSuggestions');
+    const query = searchInput.value.toLowerCase().trim();
+    
+    if (query.length === 0) {
+        hideSuggestions();
+        return;
+    }
+    
+    // Filter services based on search query
+    const filtered = services.filter(service => 
+        service.name.toLowerCase().includes(query)
+    );
+    
+    if (filtered.length === 0) {
+        suggestionsDiv.innerHTML = '<div class="suggestion-item no-results">No services found</div>';
+        suggestionsDiv.style.display = 'block';
+        return;
+    }
+    
+    // Display suggestions (max 5)
+    suggestionsDiv.innerHTML = filtered.slice(0, 5).map(service => {
+        const escapedName = service.name.replace(/'/g, "\\'");
+        return `<div class="suggestion-item" onclick="selectSuggestion('${escapedName}')">
+            <span class="suggestion-name">${service.name}</span>
+            <span class="suggestion-price">${service.price}</span>
+        </div>`;
+    }).join('');
+    
+    suggestionsDiv.style.display = 'block';
+}
+
+function hideSuggestions() {
+    document.getElementById('searchSuggestions').style.display = 'none';
+}
+
+function selectSuggestion(serviceName) {
+    document.getElementById('searchInput').value = serviceName;
+    hideSuggestions();
+    performSearch();
+}
+
+function handleSearchKeyPress(event) {
+    if (event.key === 'Enter') {
+        performSearch();
+    }
+}
+
+function performSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const query = searchInput.value.trim();
+    
+    if (query.length > 0) {
+        window.location.href = `/search/?q=${encodeURIComponent(query)}`;
+    }
+}
+
+function bookService(serviceName, servicePrice, serviceDescription) {
+    const url = `{% url 'booking' %}?service=${encodeURIComponent(serviceName)}&price=${encodeURIComponent(servicePrice)}&description=${encodeURIComponent(serviceDescription)}`;
+    window.location.href = url;
+}
+
+document.addEventListener('click', function(event) {
+    const searchBar = document.getElementById('searchBar');
+    const searchIcon = document.getElementById('searchIcon');
+    const suggestions = document.getElementById('searchSuggestions');
+    
+    if (searchBar.classList.contains('active')) {
+        if (!searchBar.contains(event.target) && !searchIcon.contains(event.target)) {
+            searchBar.classList.remove('active');
+            searchIcon.classList.remove('hidden');
+            document.getElementById('searchInput').value = '';
+            hideSuggestions();
+        }
+    }
+});
+</script>
+{% endblock %}

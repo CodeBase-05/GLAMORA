@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manager Appointments - Glamora{% endblock %}
+
+{% block content %}
+<div class="homepage-wrapper">
+    <header class="main-header">
+        <div class="header-left">
+            <a href="{% url 'admin_home' %}" class="logo-section-header" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" class="logo-favicon">
+                <span class="logo-text-header">GLAMORA</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav" id="mainNav">
+                <a href="{% url 'admin_home' %}" class="nav-link">Home</a>
+                <a href="{% url 'admin_services' %}" class="nav-link">Services</a>
+                <a href="{% url 'admin_users' %}" class="nav-link">Users</a>
+                <a href="{% url 'admin_appointments' %}" class="nav-link active">Appointments</a>
+                <a href="{% url 'admin_sales' %}" class="nav-link">Sales</a>
+                <a href="{% url 'logout' %}" class="nav-link" style="color: #dc3545;">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <main class="main-content">
+            <div class="services-page-header">
+                <h1>Appointments Management</h1>
+                <p>View and manage all appointments</p>
+            </div>
+
+            <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                {% if appointments %}
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                                <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">ID</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Date</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Time</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Customer</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Service</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Amount</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Status</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Receipt</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in appointments %}
+                            <tr style="border-bottom: 1px solid #dee2e6;">
+                                <td style="padding: 12px;">{{ appointment.id }}</td>
+                                <td style="padding: 12px;">{{ appointment.date }}</td>
+                                <td style="padding: 12px;">{{ appointment.time }}</td>
+                                <td style="padding: 12px;">{{ appointment.customer_name }}<br><small style="color: #666;">{{ appointment.mobile }}</small></td>
+                                <td style="padding: 12px;">{{ appointment.service }}</td>
+                                <td style="padding: 12px;">{{ appointment.amount }}</td>
+                                <td style="padding: 12px;">
+                                    <span class="status-badge" data-status="{{ appointment.status }}" style="padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+                                        {{ appointment.status|title }}
+                                    </span>
+                                </td>
+                                <td style="padding: 12px;">{{ appointment.receipt }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p style="color: #666; text-align: center; padding: 20px;">No appointments found.</p>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</div>
+<style>
+.status-badge[data-status="confirmed"] {
+    background: #d4edda;
+    color: #155724;
+}
+.status-badge[data-status="completed"] {
+    background: #cce5ff;
+    color: #004085;
+}
+.status-badge[data-status]:not([data-status="confirmed"]):not([data-status="completed"]) {
+    background: #f8d7da;
+    color: #721c24;
+}
+</style>
+{% endblock %}
+

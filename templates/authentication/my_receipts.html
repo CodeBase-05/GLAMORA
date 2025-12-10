@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Receipts - Glamora{% endblock %}
+
+{% block content %}
+<div class="homepage-wrapper">
+    <header class="main-header">
+        <div class="header-left">
+            <button class="hamburger-menu" onclick="toggleSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <a href="{% url 'home' %}" class="logo-section-header" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" class="logo-favicon">
+                <span class="logo-text-header">GLAMORA</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav" id="mainNav">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="{% url 'services' %}" class="nav-link">Services</a>
+                <a href="{% url 'my_bookings' %}" class="nav-link">My Bookings</a>
+                <a href="{% url 'my_receipts' %}" class="nav-link active">My Receipts</a>
+                <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <main class="main-content">
+            <div class="services-page-header">
+                <h1>My Receipts</h1>
+                <p>Review payment receipts for your confirmed bookings</p>
+            </div>
+
+            {% if receipts %}
+                <div class="services-grid">
+                    {% for receipt in receipts %}
+                    <div class="service-card" style="border: 2px solid #f0f0f0; position: relative;" data-receipt-id="{{ receipt.id }}">
+                        <button type="button" onclick="openDeleteReceiptModal({{ receipt.id }}, event)" style="position: absolute; top: 10px; right: 10px; background: none; border: none; cursor: pointer; padding: 5px; color: #e74c3c; transition: color 0.3s; z-index: 10;" onmouseover="this.style.color='#c0392b'" onmouseout="this.style.color='#e74c3c'" title="Delete Receipt">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                        </button>
+                        <div class="service-image">
+                            {% if receipt.service_image %}
+                                <img src="{{ receipt.service_image }}" alt="{{ receipt.service_name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                            {% else %}
+                                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#603D44" stroke-width="1.5">
+                                    <path d="M8 2h8l2 4h4v16H2V6h4l2-4z"></path>
+                                    <line x1="12" y1="10" x2="12" y2="16"></line>
+                                    <line x1="9" y1="13" x2="15" y2="13"></line>
+                                </svg>
+                            {% endif %}
+                        </div>
+                        <div class="service-details">
+                            <h3 class="service-name">{{ receipt.service_name }}</h3>
+                            <p class="service-description" style="color: #666;">Receipt ID: RCP{{ receipt.id|stringformat:"05d" }}</p>
+                            <div class="service-price">{{ receipt.service_price }}</div>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                                <p style="margin: 4px 0; color: #666; font-size: 0.9rem;"><strong>Date:</strong> {{ receipt.booking_date|date:"F d, Y" }}</p>
+                                <p style="margin: 4px 0; color: #666; font-size: 0.9rem;"><strong>Time:</strong> {{ receipt.booking_time }}</p>
+                                <p style="margin: 4px 0; color: #666; font-size: 0.9rem;"><strong>Status:</strong> <span style="color: #28a745; font-weight: 600;">{{ receipt.status|title }}</span></p>
+                                <p style="margin: 4px 0; color: #666; font-size: 0.9rem;"><strong>Created:</strong> {{ receipt.created_at|date:"M d, Y h:i A" }}</p>
+                            </div>
+                            <button class="book-btn" style="width: 100%; margin-top: 15px; padding: 10px; background-color: #603D44; color: white; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer;" onclick="viewReceipt('{{ receipt.id }}')">
+                                View Receipt
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 60px 20px;">
+                    <p style="font-size: 1.2rem; color: #666; margin-bottom: 20px;">No receipts available yet.</p>
+                    <p style="color: #999; margin-bottom: 20px;">Receipts will appear here once your bookings are confirmed.</p>
+                    <a href="{% url 'services' %}" class="book-btn" style="display: inline-block; padding: 12px 30px; background-color: #603D44; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Book a Service</a>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+</div>
+
+<div id="deleteReceiptModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 35px; border-radius: 15px; max-width: 420px; width: 90%; box-shadow: 0 4px 20px rgba(0,0,0,0.2); text-align: center;">
+        <h2 id="deleteReceiptModalTitle" style="font-size: 1.5rem; font-weight: bold; color: #333; margin-bottom: 15px;">Delete Receipt</h2>
+        <div id="deleteReceiptModalContent">
+            <p style="color: #555; margin-bottom: 25px;">Are you sure you want to delete this receipt? This action cannot be undone.</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="cancelDeleteReceiptBtn" style="padding: 10px 25px; background-color: #e0e0e0; color: #333; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">Cancel</button>
+                <button id="confirmDeleteReceiptBtn" style="padding: 10px 25px; background-color: #dc3545; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleSidebar() {
+    // Sidebar functionality if needed
+}
+
+// Close modal when clicking outside
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteReceiptModal = document.getElementById('deleteReceiptModal');
+    if (deleteReceiptModal) {
+        deleteReceiptModal.addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeDeleteReceiptModal();
+            }
+        });
+    }
+});
+
+// Redirect to home on page reload
+(function() {
+    const navigation = performance.getEntriesByType('navigation')[0];
+    if (navigation && navigation.type === 'reload') {
+        window.location.href = '{% url "home" %}';
+    } else if (performance.navigation && performance.navigation.type === performance.navigation.TYPE_RELOAD) {
+        window.location.href = '{% url "home" %}';
+    }
+})();
+
+function viewReceipt(receiptId) {
+    // Open receipt PDF in a new window/tab
+    const pdfUrl = '/view-receipt-pdf/' + receiptId + '/';
+    window.open(pdfUrl, '_blank');
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+let pendingDeleteReceiptId = null;
+
+function openDeleteReceiptModal(receiptId, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    pendingDeleteReceiptId = receiptId;
+    // Reset modal content
+    document.getElementById('deleteReceiptModalTitle').textContent = 'Delete Receipt';
+    document.getElementById('deleteReceiptModalContent').innerHTML = `
+        <p style="color: #555; margin-bottom: 25px;">Are you sure you want to delete this receipt? This action cannot be undone.</p>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <button id="cancelDeleteReceiptBtn" onclick="closeDeleteReceiptModal()" style="padding: 10px 25px; background-color: #e0e0e0; color: #333; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">Cancel</button>
+            <button id="confirmDeleteReceiptBtn" onclick="deleteReceipt()" style="padding: 10px 25px; background-color: #dc3545; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">Delete</button>
+        </div>
+    `;
+    document.getElementById('deleteReceiptModal').style.display = 'flex';
+}
+
+function closeDeleteReceiptModal() {
+    document.getElementById('deleteReceiptModal').style.display = 'none';
+    pendingDeleteReceiptId = null;
+}
+
+function deleteReceipt() {
+    if (!pendingDeleteReceiptId) return;
+
+    const formData = new FormData();
+    formData.append('receipt_id', pendingDeleteReceiptId);
+    formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+    
+    // Hide buttons while processing
+    const cancelBtn = document.getElementById('cancelDeleteReceiptBtn');
+    const confirmBtn = document.getElementById('confirmDeleteReceiptBtn');
+    if (cancelBtn) cancelBtn.style.display = 'none';
+    if (confirmBtn) confirmBtn.style.display = 'none';
+    
+    fetch('{% url "delete_receipt" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            document.getElementById('deleteReceiptModalTitle').textContent = 'Receipt Deleted';
+            document.getElementById('deleteReceiptModalContent').innerHTML = `
+                <div style="background: #d4edda; padding: 20px; border-radius: 10px; border: 2px solid #c3e6cb; margin-bottom: 20px;">
+                    <p style="margin: 10px 0; color: #155724; font-size: 1.1rem; font-weight: 600;">✓ Receipt deleted successfully!</p>
+                </div>
+            `;
+            
+            // Remove the receipt card from the page
+            const receiptCard = document.querySelector(`[data-receipt-id="${pendingDeleteReceiptId}"]`);
+            if (receiptCard) {
+                receiptCard.style.transition = 'opacity 0.3s';
+                receiptCard.style.opacity = '0';
+                setTimeout(() => {
+                    receiptCard.remove();
+                    const remainingReceipts = document.querySelectorAll('.service-card[data-receipt-id]');
+                    if (remainingReceipts.length === 0) {
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        setTimeout(() => {
+                            closeDeleteReceiptModal();
+                        }, 1500);
+                    }
+                }, 300);
+            } else {
+                setTimeout(() => {
+                    closeDeleteReceiptModal();
+                    location.reload();
+                }, 1500);
+            }
+        } else {
+            // Show error message
+            document.getElementById('deleteReceiptModalTitle').textContent = 'Error';
+            document.getElementById('deleteReceiptModalContent').innerHTML = `
+                <div style="background: #fff5f5; padding: 20px; border-radius: 10px; border: 2px solid #f8d7da; margin-bottom: 20px;">
+                    <p style="margin: 10px 0; color: #721c24;"><strong>Error:</strong> ${data.error || 'Failed to delete receipt'}</p>
+                </div>
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <button onclick="closeDeleteReceiptModal()" style="padding: 10px 25px; background-color: #e0e0e0; color: #333; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">Close</button>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        // Show error message
+        document.getElementById('deleteReceiptModalTitle').textContent = 'Error';
+        document.getElementById('deleteReceiptModalContent').innerHTML = `
+            <div style="background: #fff5f5; padding: 20px; border-radius: 10px; border: 2px solid #f8d7da; margin-bottom: 20px;">
+                <p style="margin: 10px 0; color: #721c24;"><strong>Error:</strong> ${error.message || 'An error occurred while deleting the receipt'}</p>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button onclick="closeDeleteReceiptModal()" style="padding: 10px 25px; background-color: #e0e0e0; color: #333; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">Close</button>
+            </div>
+        `;
+    })
+    .finally(() => {
+        pendingDeleteReceiptId = null;
+    });
+}
+</script>
+{% endblock %}
+

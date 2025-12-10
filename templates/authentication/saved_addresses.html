@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Saved Addresses - Glamora{% endblock %}
+
+{% block content %}
+<div class="homepage-wrapper">
+    <header class="main-header">
+        <div class="header-left">
+            <button class="hamburger-menu" onclick="toggleSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <a href="{% url 'home' %}" class="logo-section-header" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" class="logo-favicon">
+                <span class="logo-text-header">GLAMORA</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav" id="mainNav">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="{% url 'services' %}" class="nav-link">Services</a>
+                <a href="{% url 'my_bookings' %}" class="nav-link">My Bookings</a>
+                <a href="{% url 'my_receipts' %}" class="nav-link">My Receipts</a>
+                <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <main class="main-content">
+            <div class="services-page-header">
+                <h1>Saved Addresses</h1>
+                <p>Your saved addresses for quick bookings</p>
+            </div>
+
+            {% if addresses %}
+                <div class="services-grid">
+                    {% for address in addresses %}
+                    <div class="service-card" style="border: 2px solid #f0f0f0;">
+                        <div class="service-image">
+                            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#603D44" stroke-width="1.5">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                        </div>
+                        <div class="service-details">
+                            <h3 class="service-name">
+                                {% if address.is_default %}<span style="color: #603D44; font-size: 0.85rem;">[Default]</span> {% endif %}
+                                {% if address.address_line1 %}
+                                    {{ address.address_line1 }}
+                                {% else %}
+                                    {{ address.full_address }}
+                                {% endif %}
+                            </h3>
+                            <p class="service-description" style="color: #666;">{{ address.address_line2 }}</p>
+                            {% if address.city or address.state or address.zip_code or address.country %}
+                                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                                    <p style="margin: 5px 0; color: #666; font-size: 0.9rem;">
+                                        {{ address.city }}{% if address.city and address.state %}, {% endif %}{{ address.state }}
+                                        {% if address.zip_code %} {{ address.zip_code }}{% endif %}
+                                    </p>
+                                    {% if address.country %}
+                                        <p style="margin: 5px 0; color: #666; font-size: 0.9rem;">{{ address.country }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 60px 20px;">
+                    <p style="font-size: 1.2rem; color: #666; margin-bottom: 20px;">You have no saved addresses.</p>
+                    <p style="color: #999; margin-bottom: 20px;">Save an address during booking to see it here.</p>
+                    <a href="{% url 'services' %}" class="book-btn" style="display: inline-block; padding: 12px 30px; background-color: #603D44; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Book a Service</a>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+</div>
+
+<script>
+function toggleSidebar() {
+    // Sidebar functionality if needed
+}
+</script>
+{% endblock %}
+

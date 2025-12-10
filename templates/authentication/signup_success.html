@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Up Success - Glamora{% endblock %}
+
+{% block content %}
+<div class="signup-success-container">
+    <div class="signup-success-content">
+        <div class="success-card">
+            <div class="success-icon">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <h1 class="success-title">User Added Successfully!</h1>
+            <p class="success-message">Your account has been created successfully.</p>
+            <p class="redirect-message">Redirecting to login page in <span id="countdown">5</span> seconds...</p>
+            <div class="success-actions">
+                <a href="{% url 'login' %}" class="login-button-link">Go to Login Now</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let countdown = 5;
+const countdownElement = document.getElementById('countdown');
+const countdownInterval = setInterval(function() {
+    countdown--;
+    if (countdownElement) {
+        countdownElement.textContent = countdown;
+    }
+    if (countdown <= 0) {
+        clearInterval(countdownInterval);
+        window.location.href = "{% url 'login' %}";
+    }
+}, 1000);
+</script>
+
+<style>
+.signup-success-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #603D44;
+    padding: 20px;
+}
+
+.signup-success-content {
+    width: 100%;
+    max-width: 500px;
+}
+
+.success-card {
+    background: white;
+    border-radius: 15px;
+    padding: 50px 40px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.success-icon {
+    color: #28a745;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.success-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.success-message {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.redirect-message {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 30px;
+}
+
+#countdown {
+    font-weight: bold;
+    color: #603D44;
+    font-size: 1.2rem;
+}
+
+.success-actions {
+    margin-top: 30px;
+}
+
+.login-button-link {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #603D44;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.login-button-link:hover {
+    background-color: #4a2f35;
+    color: white;
+}
+</style>
+{% endblock %}
+

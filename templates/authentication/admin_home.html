@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manager Home - Glamora{% endblock %}
+
+{% block content %}
+<div class="homepage-wrapper">
+    <header class="main-header">
+        <div class="header-left">
+            <a href="{% url 'admin_home' %}" class="logo-section-header" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" class="logo-favicon">
+                <span class="logo-text-header">GLAMORA</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav" id="mainNav">
+                <a href="{% url 'admin_home' %}" class="nav-link active">Home</a>
+                <a href="{% url 'admin_services' %}" class="nav-link">Services</a>
+                <a href="{% url 'admin_users' %}" class="nav-link">Users</a>
+                <a href="{% url 'admin_appointments' %}" class="nav-link">Appointments</a>
+                <a href="{% url 'admin_sales' %}" class="nav-link">Sales</a>
+                <a href="{% url 'logout' %}" class="nav-link" style="color: #dc3545;">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <main class="main-content">
+            <div class="services-page-header">
+                <h1>Manager Dashboard</h1>
+                <p>Welcome back, {{ request.admin.First_Name }} {{ request.admin.Last_Name }} ({{ request.admin.Role }})</p>
+            </div>
+
+            <div class="admin-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <a href="{% url 'admin_users' %}?tab=customers" style="text-decoration: none; color: inherit;">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #603D44 0%, #8B5A6B 100%); color: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.1)'">
+                        <div style="font-size: 2.5rem; font-weight: bold; margin-bottom: 10px;">{{ total_customers }}</div>
+                        <div style="font-size: 1rem; opacity: 0.9;">Total Customers</div>
+                    </div>
+                </a>
+                <a href="{% url 'admin_appointments' %}" style="text-decoration: none; color: inherit;">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%); color: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.1)'">
+                        <div style="font-size: 2.5rem; font-weight: bold; margin-bottom: 10px;">{{ total_appointments }}</div>
+                        <div style="font-size: 1rem; opacity: 0.9;">Total Appointments</div>
+                    </div>
+                </a>
+                <a href="{% url 'admin_sales' %}" style="text-decoration: none; color: inherit;">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #50c878 0%, #3da85a 100%); color: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.1)'">
+                        <div style="font-size: 2.5rem; font-weight: bold; margin-bottom: 10px;">${{ total_sales|floatformat:2 }}</div>
+                        <div style="font-size: 1rem; opacity: 0.9;">Total Sales</div>
+                    </div>
+                </a>
+                <a href="{% url 'admin_appointments' %}" style="text-decoration: none; color: inherit;">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.1)'">
+                        <div style="font-size: 2.5rem; font-weight: bold; margin-bottom: 10px;">{{ today_appointments }}</div>
+                        <div style="font-size: 1rem; opacity: 0.9;">Today's Appointments</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="admin-section" style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; color: #333;">Recent Appointments</h2>
+                {% if recent_appointments %}
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                                <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Date</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Time</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Customer</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Service</th>
+                                <th style="padding: 12px; text-align: left; font-weight: 600; color: #333;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in recent_appointments %}
+                            <tr style="border-bottom: 1px solid #dee2e6;">
+                                <td style="padding: 12px;">{{ appointment.date }}</td>
+                                <td style="padding: 12px;">{{ appointment.time }}</td>
+                                <td style="padding: 12px;">{{ appointment.customer_name }}</td>
+                                <td style="padding: 12px;">{{ appointment.service }}</td>
+                                <td style="padding: 12px;">
+                                    <span class="status-badge" data-status="{{ appointment.status }}" style="padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+                                        {{ appointment.status|title }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p style="color: #666; text-align: center; padding: 20px;">No appointments found.</p>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</div>
+<style>
+.status-badge[data-status="confirmed"] {
+    background: #d4edda;
+    color: #155724;
+}
+.status-badge[data-status="completed"] {
+    background: #cce5ff;
+    color: #004085;
+}
+.status-badge[data-status]:not([data-status="confirmed"]):not([data-status="completed"]) {
+    background: #f8d7da;
+    color: #721c24;
+}
+</style>
+{% endblock %}
+

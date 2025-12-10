@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile Settings - Glamora{% endblock %}
+
+{% block content %}
+<div class="homepage-wrapper">
+    <header class="main-header">
+        <div class="header-left">
+            <button class="hamburger-menu" onclick="toggleSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <a href="{% url 'home' %}" class="logo-section-header" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" class="logo-favicon">
+                <span class="logo-text-header">GLAMORA</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav" id="mainNav">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="{% url 'services' %}" class="nav-link">Services</a>
+                <a href="{% url 'my_bookings' %}" class="nav-link">My Bookings</a>
+                <a href="{% url 'my_receipts' %}" class="nav-link">My Receipts</a>
+                <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <main class="main-content" style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+            <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                <h1 style="font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 20px;">Profile Settings</h1>
+                <form method="POST" action="{% url 'profile_settings' %}">
+                    {% csrf_token %}
+                    <div style="margin-bottom: 20px;">
+                        <label for="first_name" style="display: block; font-weight: bold; color: #000; margin-bottom: 8px; font-size: 0.9rem;">First Name</label>
+                        <input type="text" id="first_name" name="first_name" value="{{ first_name|default:'' }}" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; background-color: #f5f5f5;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label for="last_name" style="display: block; font-weight: bold; color: #000; margin-bottom: 8px; font-size: 0.9rem;">Last Name</label>
+                        <input type="text" id="last_name" name="last_name" value="{{ last_name|default:'' }}" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; background-color: #f5f5f5;">
+                    </div>
+                    <div style="margin-bottom: 30px;">
+                        <label for="mobile_no" style="display: block; font-weight: bold; color: #000; margin-bottom: 8px; font-size: 0.9rem;">Mobile Number</label>
+                        <input type="text" id="mobile_no" name="mobile_no" value="{{ mobile_no }}" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; background-color: #f5f5f5;" placeholder="Enter mobile number">
+                    </div>
+                    <div style="display: flex; gap: 15px; justify-content: center;">
+                        <a href="{% url 'profile' %}" style="padding: 12px 30px; background-color: #e0e0e0; color: #333; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center;">Back</a>
+                        <button type="submit" style="padding: 12px 30px; background-color: #603D44; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+function toggleSidebar() {
+    // Sidebar functionality if needed
+}
+</script>
+{% endblock %}
+

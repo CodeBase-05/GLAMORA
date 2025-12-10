@@ -1,0 +1,355 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Appointment - Glamora{% endblock %}
+
+{% block content %}
+<div class="homepage-wrapper">
+    <header class="main-header">
+        <div class="header-left">
+            <button class="hamburger-menu" onclick="toggleSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <a href="{% url 'home' %}" class="logo-section-header" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" class="logo-favicon">
+                <span class="logo-text-header">GLAMORA</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav" id="mainNav">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="{% url 'services' %}" class="nav-link">Services</a>
+                <a href="{% url 'my_bookings' %}" class="nav-link active">My Bookings</a>
+                <a href="{% url 'my_receipts' %}" class="nav-link">My Receipts</a>
+                <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <main class="main-content" style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+            <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 300px;">
+                    <div class="service-card" style="max-width: 100%;">
+                        <div class="service-image">
+                            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#603D44" stroke-width="1.5">
+                                <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                <path d="M6 18v-7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v7"></path>
+                            </svg>
+                        </div>
+                        <div class="service-details">
+                            <h3 class="service-name">{{ service_name }}</h3>
+                            <p class="service-description">{{ service_description }}</p>
+                            <div class="service-price">{{ service_price }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="flex: 1; min-width: 300px;">
+                    <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                        <h2 style="font-size: 1.5rem; font-weight: bold; color: #333; margin-bottom: 25px;">Modify Date & Time</h2>
+                        
+                        <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffc107;">
+                            <p style="margin: 0; color: #856404; font-size: 0.9rem;"><strong>Note:</strong> You can only select dates after your current booking date.</p>
+                        </div>
+                        
+                        <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #e0e0e0;">
+                            <h3 style="font-size: 1.1rem; font-weight: bold; color: #333; margin-bottom: 15px;">Current Booking Details</h3>
+                            <p style="margin: 8px 0; color: #666; font-size: 0.95rem;"><strong>Service:</strong> {{ service_name }}</p>
+                            <p style="margin: 8px 0; color: #666; font-size: 0.95rem;"><strong>Date:</strong> <span id="currentDateDisplay"></span></p>
+                            <p style="margin: 8px 0; color: #666; font-size: 0.95rem;"><strong>Time:</strong> {{ current_time }}</p>
+                            <p style="margin: 8px 0; color: #666; font-size: 0.95rem;"><strong>Price:</strong> {{ service_price }}</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 30px;">
+                            <label style="display: block; font-weight: bold; color: #000; margin-bottom: 10px; font-size: 1rem;">Select New Date</label>
+                            <input type="date" id="bookingDate" name="booking_date" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; background-color: #f5f5f5;" min="{{ min_date }}" required>
+                        </div>
+
+                        <div id="timeSlotsContainer" style="display: none; margin-bottom: 30px;">
+                            <label style="display: block; font-weight: bold; color: #000; margin-bottom: 15px; font-size: 1rem;">Select New Time Slot</label>
+                            <div id="timeSlots" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                            </div>
+                        </div>
+
+                        <button id="confirmBookingBtn" class="book-btn" style="width: 100%; padding: 14px; background-color: #603D44; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 20px; display: none;" disabled>
+                            Update Booking
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div id="confirmationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 40px; border-radius: 15px; max-width: 500px; width: 90%; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+        <h2 style="font-size: 1.8rem; font-weight: bold; color: #333; margin-bottom: 20px; text-align: center;">Confirm Update</h2>
+        <div id="bookingSummary" style="margin-bottom: 30px;">
+        </div>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <button id="cancelConfirmBtn" style="padding: 12px 30px; background-color: #e0e0e0; color: #333; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">Cancel</button>
+            <button id="finalConfirmBtn" style="padding: 12px 30px; background-color: #603D44; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">Update Booking</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let selectedDate = '';
+let selectedTime = '';
+let bookingId = '{{ booking_id }}';
+
+// Format and display current date (parse without timezone conversion)
+const currentDateStr = '{{ current_date }}';
+const dateParts = currentDateStr.split('-');
+const currentDateObj = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+document.getElementById('currentDateDisplay').textContent = currentDateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+// Set minimum date to next day after current booking (tomorrow or later)
+document.getElementById('bookingDate').setAttribute('min', '{{ min_date }}');
+// Clear the date input so user must select a new date
+document.getElementById('bookingDate').value = '';
+
+// Time slots
+const timeSlots = [
+    '11:00 AM', '11:30 AM',
+    '12:00 PM', '12:30 PM',
+    '1:00 PM', '1:30 PM',
+    '2:00 PM', '2:30 PM',
+    '3:00 PM', '3:30 PM',
+    '4:00 PM'
+];
+
+// Date selection handler
+document.getElementById('bookingDate').addEventListener('change', function(e) {
+    selectedDate = e.target.value;
+    if (selectedDate) {
+        displayTimeSlots();
+        document.getElementById('timeSlotsContainer').style.display = 'block';
+    } else {
+        document.getElementById('timeSlotsContainer').style.display = 'none';
+        document.getElementById('confirmBookingBtn').style.display = 'none';
+    }
+});
+
+function displayTimeSlots() {
+    const container = document.getElementById('timeSlots');
+    container.innerHTML = '';
+    
+    // Get booked slots for selected date
+    let bookedSlots = {};
+    try {
+        const bookedSlotsJson = '{{ booked_slots|escapejs }}';
+        if (bookedSlotsJson && bookedSlotsJson !== 'None' && bookedSlotsJson !== '') {
+            bookedSlots = JSON.parse(bookedSlotsJson);
+        }
+    } catch (e) {
+        console.error('Error parsing booked slots:', e);
+        bookedSlots = {};
+    }
+    const bookedSlotsForDate = bookedSlots[selectedDate] || [];
+    
+    timeSlots.forEach(slot => {
+        // Check if this slot is booked for the selected date
+        const isBooked = bookedSlotsForDate.includes(slot);
+        
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'timeSlot';
+        radio.id = `slot-${slot}`;
+        radio.value = slot;
+        radio.style.display = 'none';
+        radio.disabled = isBooked;
+        
+        const label = document.createElement('label');
+        label.htmlFor = `slot-${slot}`;
+        label.textContent = slot;
+        
+        if (isBooked) {
+            // Disabled style for booked slots
+            label.style.cssText = 'display: block; padding: 12px; text-align: center; border: 2px solid #ccc; border-radius: 8px; cursor: not-allowed; background-color: #f0f0f0; font-weight: 500; color: #999; opacity: 0.6;';
+            label.title = 'This time slot is already booked';
+        } else {
+            label.style.cssText = 'display: block; padding: 12px; text-align: center; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; background-color: #f5f5f5; font-weight: 500; transition: all 0.3s;';
+        }
+        
+        if (!isBooked) {
+            label.addEventListener('click', function() {
+                // Check the radio button
+                radio.checked = true;
+                selectedTime = slot;
+                document.getElementById('confirmBookingBtn').style.display = 'block';
+                document.getElementById('confirmBookingBtn').disabled = false;
+                
+                // Update label styles
+                document.querySelectorAll('#timeSlots label').forEach(l => {
+                    if (!l.style.opacity || l.style.opacity !== '0.6') {
+                        l.style.backgroundColor = '#f5f5f5';
+                        l.style.borderColor = '#e0e0e0';
+                        l.style.color = '#333';
+                    }
+                });
+                label.style.backgroundColor = '#603D44';
+                label.style.borderColor = '#603D44';
+                label.style.color = 'white';
+            });
+        }
+        
+        const wrapper = document.createElement('div');
+        wrapper.appendChild(radio);
+        wrapper.appendChild(label);
+        container.appendChild(wrapper);
+    });
+}
+
+// Confirm Booking Button
+document.getElementById('confirmBookingBtn').addEventListener('click', function() {
+    if (!selectedDate || !selectedTime) {
+        // Show error in modal
+        const modal = document.getElementById('confirmationModal');
+        const summary = document.getElementById('bookingSummary');
+        summary.innerHTML = `
+            <div style="background: #fff5f5; padding: 20px; border-radius: 10px; border: 2px solid #f8d7da;">
+                <p style="margin: 10px 0; color: #721c24;"><strong>Error:</strong> Please select both date and time</p>
+            </div>
+        `;
+        modal.style.display = 'flex';
+        return;
+    }
+    
+    // Check if date is after current booking date (must be next day or later)
+    // Parse dates without timezone conversion
+    const currentDateParts = '{{ current_date }}'.split('-');
+    const currentBookingDate = new Date(parseInt(currentDateParts[0]), parseInt(currentDateParts[1]) - 1, parseInt(currentDateParts[2]));
+    currentBookingDate.setHours(0, 0, 0, 0);
+    const selectedDateParts = selectedDate.split('-');
+    const newDate = new Date(parseInt(selectedDateParts[0]), parseInt(selectedDateParts[1]) - 1, parseInt(selectedDateParts[2]));
+    newDate.setHours(0, 0, 0, 0);
+    if (newDate <= currentBookingDate) {
+        const modal = document.getElementById('confirmationModal');
+        const summary = document.getElementById('bookingSummary');
+        summary.innerHTML = `
+            <div style="background: #fff5f5; padding: 20px; border-radius: 10px; border: 2px solid #f8d7da;">
+                <p style="margin: 10px 0; color: #721c24;"><strong>Error:</strong> You can only select dates after your current booking date (next day or later).</p>
+            </div>
+        `;
+        modal.style.display = 'flex';
+        return;
+    }
+    
+    // Show confirmation modal
+    const modal = document.getElementById('confirmationModal');
+    const summary = document.getElementById('bookingSummary');
+    
+    summary.innerHTML = `
+        <div style="background: #f5f5f5; padding: 20px; border-radius: 10px;">
+            <p style="margin: 10px 0;"><strong>Service:</strong> {{ service_name }}</p>
+            <p style="margin: 10px 0;"><strong>Price:</strong> {{ service_price }}</p>
+            <p style="margin: 10px 0;"><strong>New Date:</strong> ${formatDate(selectedDate)}</p>
+            <p style="margin: 10px 0;"><strong>New Time:</strong> ${selectedTime}</p>
+        </div>
+    `;
+    
+    modal.style.display = 'flex';
+});
+
+// Cancel confirmation
+document.getElementById('cancelConfirmBtn').addEventListener('click', function() {
+    document.getElementById('confirmationModal').style.display = 'none';
+});
+
+// Final confirmation
+document.getElementById('finalConfirmBtn').addEventListener('click', function() {
+    const formData = new FormData();
+    formData.append('booking_id', bookingId);
+    formData.append('booking_date', selectedDate);
+    formData.append('booking_time', selectedTime);
+    formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+    
+    // Disable button during request
+    document.getElementById('finalConfirmBtn').disabled = true;
+    document.getElementById('finalConfirmBtn').textContent = 'Updating...';
+    
+    fetch('{% url "update_booking" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            const summary = document.getElementById('bookingSummary');
+            summary.innerHTML = `
+                <div style="background: #d4edda; padding: 20px; border-radius: 10px; border: 2px solid #c3e6cb; margin-bottom: 20px;">
+                    <p style="margin: 10px 0; color: #155724; font-size: 1.1rem; font-weight: 600;">✓ ${data.message || 'Booking updated successfully!'}</p>
+                </div>
+            `;
+            document.getElementById('finalConfirmBtn').style.display = 'none';
+            document.getElementById('cancelConfirmBtn').textContent = 'Close';
+            
+            // Redirect after 2 seconds
+            setTimeout(() => {
+                window.location.href = '{% url "my_bookings" %}';
+            }, 2000);
+        } else {
+            // Show error message
+            const summary = document.getElementById('bookingSummary');
+            summary.innerHTML = `
+                <div style="background: #fff5f5; padding: 20px; border-radius: 10px; border: 2px solid #f8d7da; margin-bottom: 20px;">
+                    <p style="margin: 10px 0; color: #721c24;"><strong>Error:</strong> ${data.error || 'Failed to update booking'}</p>
+                </div>
+            `;
+            document.getElementById('finalConfirmBtn').disabled = false;
+            document.getElementById('finalConfirmBtn').textContent = 'Update Booking';
+            document.getElementById('cancelConfirmBtn').style.display = 'inline-block';
+        }
+    })
+    .catch(error => {
+        // Show error in modal
+        const summary = document.getElementById('bookingSummary');
+        summary.innerHTML = `
+            <div style="background: #fff5f5; padding: 20px; border-radius: 10px; border: 2px solid #f8d7da; margin-bottom: 20px;">
+                <p style="margin: 10px 0; color: #721c24;"><strong>Error:</strong> ${error.message}</p>
+            </div>
+        `;
+        document.getElementById('finalConfirmBtn').disabled = false;
+        document.getElementById('finalConfirmBtn').textContent = 'Update Booking';
+        document.getElementById('cancelConfirmBtn').style.display = 'inline-block';
+    });
+});
+
+function formatDate(dateString) {
+    // Parse date without timezone conversion to avoid date shifting
+    const dateParts = dateString.split('-');
+    const date = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+    return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function toggleSidebar() {
+    // Sidebar functionality if needed
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}
+

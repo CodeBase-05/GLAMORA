@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Booking Confirmation - Glamora{% endblock %}
+
+{% block content %}
+<div class="homepage-wrapper">
+    <header class="main-header">
+        <div class="header-left">
+            <button class="hamburger-menu" onclick="toggleSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <a href="{% url 'home' %}" class="logo-section-header" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" class="logo-favicon">
+                <span class="logo-text-header">GLAMORA</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav" id="mainNav">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="{% url 'services' %}" class="nav-link">Services</a>
+                <a href="{% url 'my_bookings' %}" class="nav-link">My Bookings</a>
+                <a href="{% url 'my_receipts' %}" class="nav-link">My Receipts</a>
+                <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <main class="main-content" style="max-width: 700px; margin: 0 auto; padding: 40px 20px;">
+            <!-- Success Message -->
+            <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; margin-bottom: 30px;">
+                <div style="width: 80px; height: 80px; margin: 0 auto 30px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                
+                <h1 style="font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 10px;">Booking Confirmed!</h1>
+                <p style="font-size: 1.1rem; color: #666; margin-bottom: 30px;">Your appointment has been successfully booked.</p>
+            </div>
+
+            <!-- Receipt Card -->
+            <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border: 2px solid #603D44;">
+                <!-- Receipt Header -->
+                <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e0e0e0;">
+                    <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 15px;">
+                    <h2 style="font-size: 1.8rem; font-weight: bold; color: #603D44; margin-bottom: 5px;">GLAMORA</h2>
+                    <p style="color: #666; font-size: 0.9rem;">Receipt</p>
+                </div>
+
+                <!-- Receipt Number -->
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 5px;">Receipt Number</p>
+                    <p style="font-size: 1.5rem; font-weight: bold; color: #603D44; letter-spacing: 2px;">{{ receipt_number }}</p>
+                </div>
+
+                <!-- Receipt Details -->
+                <div style="background: #f5f5f5; padding: 25px; border-radius: 10px; margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; margin: 15px 0; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+                        <span style="color: #666; font-weight: 500;">Service:</span>
+                        <span style="color: #333; font-weight: bold; text-align: right;">{{ service_name }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 15px 0; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+                        <span style="color: #666; font-weight: 500;">Appointment Date:</span>
+                        <span style="color: #333; font-weight: bold; text-align: right;">{{ appointment_date }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 15px 0; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+                        <span style="color: #666; font-weight: 500;">Appointment Time:</span>
+                        <span style="color: #333; font-weight: bold; text-align: right;">{{ appointment_time }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 15px 0; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+                        <span style="color: #666; font-weight: 500;">Payment Method:</span>
+                        <span style="color: #333; font-weight: bold; text-align: right;">{{ payment_method }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 15px 0; padding-bottom: 15px; border-bottom: 2px solid #603D44;">
+                        <span style="color: #333; font-weight: bold; font-size: 1.1rem;">Total Amount:</span>
+                        <span style="color: #603D44; font-weight: bold; font-size: 1.3rem;">{{ amount }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 15px 0;">
+                        <span style="color: #666; font-weight: 500;">Receipt Date:</span>
+                        <span style="color: #333; font-weight: bold; text-align: right;">{{ receipt_date }}</span>
+                    </div>
+                </div>
+
+                <!-- Customer Info -->
+                <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+                    <h3 style="font-size: 1rem; font-weight: bold; color: #333; margin-bottom: 15px;">Customer Information</h3>
+                    <p style="color: #666; margin: 8px 0;"><strong>Name:</strong> {{ customer_name }}</p>
+                    {% if customer_mobile %}
+                    <p style="color: #666; margin: 8px 0;"><strong>Mobile:</strong> {{ customer_mobile }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
+                    <a href="{% url 'my_bookings' %}" style="display: inline-block; background: #603D44; color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1rem; transition: background 0.3s;" onmouseover="this.style.background='#4a2f35'" onmouseout="this.style.background='#603D44'">
+                        View My Bookings
+                    </a>
+                    <a href="{% url 'my_receipts' %}" style="display: inline-block; background: #e0e0e0; color: #333; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1rem; transition: background 0.3s;" onmouseover="this.style.background='#d0d0d0'" onmouseout="this.style.background='#e0e0e0'">
+                        View All Receipts
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+function toggleSidebar() {
+    // Sidebar functionality if needed
+}
+
+// Print receipt functionality (optional)
+function printReceipt() {
+    window.print();
+}
+</script>
+{% endblock %}
+

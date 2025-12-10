@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manager Services - Glamora{% endblock %}
+
+{% block content %}
+<div class="homepage-wrapper">
+    <header class="main-header">
+        <div class="header-left">
+            <a href="{% url 'admin_home' %}" class="logo-section-header" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" class="logo-favicon">
+                <span class="logo-text-header">GLAMORA</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav" id="mainNav">
+                <a href="{% url 'admin_home' %}" class="nav-link">Home</a>
+                <a href="{% url 'admin_services' %}" class="nav-link active">Services</a>
+                <a href="{% url 'admin_users' %}" class="nav-link">Users</a>
+                <a href="{% url 'admin_appointments' %}" class="nav-link">Appointments</a>
+                <a href="{% url 'admin_sales' %}" class="nav-link">Sales</a>
+                <a href="{% url 'logout' %}" class="nav-link" style="color: #dc3545;">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <main class="main-content">
+            <div class="services-page-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>Services Management</h1>
+                    <p>Manage all services offered by Glamora</p>
+                </div>
+                <button onclick="openAddServiceModal()" style="background: linear-gradient(135deg, #603D44 0%, #8B5A6B 100%); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add Service
+                </button>
+            </div>
+
+            <div class="services-grid">
+                {% for service in services %}
+                <div class="service-card" style="position: relative;">
+                    <div class="service-details">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                            <h3 class="service-name">{{ service.name }}</h3>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="edit-service-btn" data-service-id="{{ service.id }}" style="background: #4a90e2; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Edit</button>
+                                <button class="delete-service-btn" data-service-id="{{ service.id }}" data-service-name="{{ service.name }}" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Delete</button>
+                            </div>
+                        </div>
+                        <p class="service-description">{{ service.description }}</p>
+                        <div class="service-price">
+                            {% if service.original_price %}
+                                <span style="text-decoration: line-through; color: #999; font-size: 0.9rem; margin-right: 8px;">{{ service.original_price }}</span>
+                            {% endif %}
+                            <span>{{ service.price }}</span>
+                        </div>
+                        <div style="margin-top: 10px; padding: 8px; background: #f8f9fa; border-radius: 6px; font-size: 0.9rem; color: #666;">
+                            Category: <strong>{{ service.category }}</strong>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p style="grid-column: 1 / -1; text-align: center; color: #666; padding: 40px;">No services found.</p>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+</div>
+
+<div id="serviceModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 id="modalTitle" style="margin: 0; color: #333;">Add Service</h2>
+            <button onclick="closeServiceModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">&times;</button>
+        </div>
+        <form id="serviceForm" method="POST">
+            {% csrf_token %}
+            <input type="hidden" id="serviceId" name="service_id">
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Service Name *</label>
+                <input type="text" id="serviceName" name="service_name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Category *</label>
+                <select id="serviceCategory" name="category" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                    <option value="Deals">Deals</option>
+                    <option value="Hair">Hair</option>
+                    <option value="Waxing">Waxing</option>
+                    <option value="Threading">Threading</option>
+                    <option value="Facial">Facial</option>
+                    <option value="Nails">Nails</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Description</label>
+                <textarea id="serviceDescription" name="description" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical;"></textarea>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Price *</label>
+                <input type="number" id="servicePrice" name="price" step="0.01" min="0" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Original Price (for discount)</label>
+                <input type="number" id="serviceOriginalPrice" name="original_price" step="0.01" min="0" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #333;">Discount Label</label>
+                <input type="text" id="serviceDiscountLabel" name="discount_label" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="serviceIsActive" name="is_active" checked>
+                    <span style="font-weight: 600; color: #333;">Active</span>
+                </label>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" onclick="closeServiceModal()" style="background: #f0f0f0; color: #333; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">Cancel</button>
+                <button type="submit" style="background: linear-gradient(135deg, #603D44 0%, #8B5A6B 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openAddServiceModal() {
+    document.getElementById('serviceModal').style.display = 'flex';
+    document.getElementById('modalTitle').textContent = 'Add Service';
+    document.getElementById('serviceForm').action = '{% url "admin_add_service" %}';
+    document.getElementById('serviceForm').reset();
+    document.getElementById('serviceId').value = '';
+    document.getElementById('serviceIsActive').checked = true;
+}
+
+function editService(serviceId) {
+    fetch(`/admin/get-service/${serviceId}/`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('serviceModal').style.display = 'flex';
+            document.getElementById('modalTitle').textContent = 'Edit Service';
+            document.getElementById('serviceForm').action = '{% url "admin_edit_service" %}';
+            document.getElementById('serviceId').value = data.id;
+            document.getElementById('serviceName').value = data.name;
+            document.getElementById('serviceCategory').value = data.category;
+            document.getElementById('serviceDescription').value = data.description || '';
+            document.getElementById('servicePrice').value = data.price;
+            document.getElementById('serviceOriginalPrice').value = data.original_price || '';
+            document.getElementById('serviceDiscountLabel').value = data.discount_label || '';
+            document.getElementById('serviceIsActive').checked = data.is_active;
+        })
+        .catch(error => {
+            alert('Error loading service details');
+        });
+}
+
+function closeServiceModal() {
+    document.getElementById('serviceModal').style.display = 'none';
+}
+
+function deleteService(serviceId, serviceName) {
+    if (confirm(`Are you sure you want to delete "${serviceName}"?`)) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "admin_delete_service" %}';
+        
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = 'csrfmiddlewaretoken';
+        csrf.value = '{{ csrf_token }}';
+        form.appendChild(csrf);
+        
+        const idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'service_id';
+        idInput.value = serviceId;
+        form.appendChild(idInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.edit-service-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            editService(this.getAttribute('data-service-id'));
+        });
+    });
+    
+    document.querySelectorAll('.delete-service-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            deleteService(this.getAttribute('data-service-id'), this.getAttribute('data-service-name'));
+        });
+    });
+});
+</script>
+{% endblock %}

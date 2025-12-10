@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile - Glamora{% endblock %}
+
+{% block content %}
+<div class="homepage-wrapper">
+    <header class="main-header">
+        <div class="header-left">
+            <button class="hamburger-menu" onclick="toggleSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <a href="{% url 'home' %}" class="logo-section-header" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="{% static 'images/favicon.jpg' %}" alt="Glamora Logo" class="logo-favicon">
+                <span class="logo-text-header">GLAMORA</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <nav class="main-nav" id="mainNav">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="{% url 'services' %}" class="nav-link">Services</a>
+                <a href="{% url 'my_bookings' %}" class="nav-link">My Bookings</a>
+                <a href="{% url 'my_receipts' %}" class="nav-link">My Receipts</a>
+                <a href="{% url 'profile' %}" class="nav-link active">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <main class="main-content" style="max-width: 900px; margin: 0 auto; padding: 40px 20px;">
+            <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 30px; text-align: center;">
+                <div style="margin-bottom: 20px;">
+                    <div style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #603D44 0%, #8B5A6B 100%); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(96, 61, 68, 0.3);">
+                        <span style="font-size: 3rem; font-weight: bold; color: white;">{{ customer.First_Name|first|upper }}{{ customer.Last_Name|first|upper|default:"" }}</span>
+                    </div>
+                </div>
+                <h1 style="font-size: 2.5rem; font-weight: bold; color: #333; margin-bottom: 10px;">{{ profile_display_name|default:"Profile Name" }}</h1>
+                <p style="font-size: 1.1rem; color: #666; margin-bottom: 5px;">{{ customer.Mobile_No }}</p>
+            </div>
+
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                <h2 style="font-size: 1.5rem; font-weight: bold; color: #333; margin-bottom: 25px;">Profile Options</h2>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <a href="{% url 'profile_settings' %}" class="profile-option" style="display: flex; align-items: center; padding: 20px; border: 2px solid #e0e0e0; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; background-color: #f9f9f9;" onmouseover="this.style.borderColor='#603D44'; this.style.backgroundColor='#f5f5f5'" onmouseout="this.style.borderColor='#e0e0e0'; this.style.backgroundColor='#f9f9f9'">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#603D44" stroke-width="2" style="margin-right: 15px;">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span style="font-size: 1.1rem; font-weight: 500;">Profile Settings</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" style="margin-left: auto;">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    
+                    <a href="{% url 'my_bookings' %}" class="profile-option" style="display: flex; align-items: center; padding: 20px; border: 2px solid #e0e0e0; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; background-color: #f9f9f9;" onmouseover="this.style.borderColor='#603D44'; this.style.backgroundColor='#f5f5f5'" onmouseout="this.style.borderColor='#e0e0e0'; this.style.backgroundColor='#f9f9f9'">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#603D44" stroke-width="2" style="margin-right: 15px;">
+                            <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <path d="M6 18v-7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v7"></path>
+                        </svg>
+                        <span style="font-size: 1.1rem; font-weight: 500;">My Bookings</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" style="margin-left: auto;">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    
+                    
+                    <a href="{% url 'my_receipts' %}" class="profile-option" style="display: flex; align-items: center; padding: 20px; border: 2px solid #e0e0e0; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; background-color: #f9f9f9;" onmouseover="this.style.borderColor='#603D44'; this.style.backgroundColor='#f5f5f5'" onmouseout="this.style.borderColor='#e0e0e0'; this.style.backgroundColor='#f9f9f9'">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#603D44" stroke-width="2" style="margin-right: 15px;">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span style="font-size: 1.1rem; font-weight: 500;">My Receipts</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" style="margin-left: auto;">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    
+                    <a href="{% url 'saved_addresses' %}" class="profile-option" style="display: flex; align-items: center; padding: 20px; border: 2px solid #e0e0e0; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; background-color: #f9f9f9;" onmouseover="this.style.borderColor='#603D44'; this.style.backgroundColor='#f5f5f5'" onmouseout="this.style.borderColor='#e0e0e0'; this.style.backgroundColor='#f9f9f9'">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#603D44" stroke-width="2" style="margin-right: 15px;">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span style="font-size: 1.1rem; font-weight: 500;">Saved Addresses ({{ saved_addresses|length }})</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" style="margin-left: auto;">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    
+                    <button id="changePasswordBtn" type="button" class="profile-option" style="display: flex; align-items: center; width: 100%; padding: 20px; border: 2px solid #e0e0e0; border-radius: 10px; background-color: #f9f9f9; color: #333; transition: all 0.3s; cursor: pointer;" onmouseover="this.style.borderColor='#603D44'; this.style.backgroundColor='#f5f5f5'" onmouseout="this.style.borderColor='#e0e0e0'; this.style.backgroundColor='#f9f9f9'">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#603D44" stroke-width="2" style="margin-right: 15px;">
+                            <circle cx="8" cy="15" r="4"></circle>
+                            <line x1="12" y1="17" x2="22" y2="17"></line>
+                            <line x1="16" y1="13" x2="16" y2="21"></line>
+                            <line x1="20" y1="13" x2="20" y2="21"></line>
+                        </svg>
+                        <span style="font-size: 1.1rem; font-weight: 500; text-align: left;">Change Password</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" style="margin-left: auto;">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                    
+                    <a href="{% url 'logout' %}" class="profile-option" style="display: flex; align-items: center; padding: 20px; border: 2px solid #dc3545; border-radius: 10px; text-decoration: none; color: #dc3545; transition: all 0.3s; background-color: #fff5f5;" onmouseover="this.style.borderColor='#c82333'; this.style.backgroundColor='#ffe6e6'; this.style.color='#c82333'" onmouseout="this.style.borderColor='#dc3545'; this.style.backgroundColor='#fff5f5'; this.style.color='#dc3545'">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 15px;">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        <span style="font-size: 1.1rem; font-weight: 500;">Logout</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left: auto;">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div id="changePasswordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 40px; border-radius: 15px; max-width: 500px; width: 90%; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+        <h2 style="font-size: 1.8rem; font-weight: bold; color: #333; margin-bottom: 20px; text-align: center;">Change Password</h2>
+        <div id="changePasswordMessage" style="margin-bottom: 15px;"></div>
+        <form id="changePasswordForm">
+            <div style="margin-bottom: 15px;">
+                <label for="oldPassword" style="display: block; font-weight: bold; color: #000; margin-bottom: 8px; font-size: 0.9rem;">CURRENT PASSWORD</label>
+                <div class="password-input-wrapper" style="position: relative;">
+                    <input type="password" id="oldPassword" name="old_password" required placeholder="Enter current password" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; background-color: #f5f5f5;">
+                    <span class="password-toggle" onclick="togglePassword('oldPassword')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                        <svg id="oldPassword-eye" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: block;">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg id="oldPassword-eye-slash" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label for="newPassword" style="display: block; font-weight: bold; color: #000; margin-bottom: 8px; font-size: 0.9rem;">NEW PASSWORD</label>
+                <div class="password-input-wrapper" style="position: relative;">
+                    <input type="password" id="newPassword" name="new_password" required placeholder="Enter new password" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; background-color: #f5f5f5;">
+                    <span class="password-toggle" onclick="togglePassword('newPassword')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                        <svg id="newPassword-eye" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: block;">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg id="newPassword-eye-slash" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            <div style="margin-bottom: 25px;">
+                <label for="confirmPassword" style="display: block; font-weight: bold; color: #000; margin-bottom: 8px; font-size: 0.9rem;">CONFIRM PASSWORD</label>
+                <div class="password-input-wrapper" style="position: relative;">
+                    <input type="password" id="confirmPassword" name="confirm_password" required placeholder="Re-enter new password" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; background-color: #f5f5f5;">
+                    <span class="password-toggle" onclick="togglePassword('confirmPassword')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                        <svg id="confirmPassword-eye" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: block;">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg id="confirmPassword-eye-slash" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button type="button" id="cancelPasswordBtn" style="padding: 12px 30px; background-color: #e0e0e0; color: #333; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">Close</button>
+                <button type="submit" style="padding: 12px 30px; background-color: #603D44; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;">Save Password</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Redirect to home on page reload
+(function() {
+    const navigation = performance.getEntriesByType('navigation')[0];
+    if (navigation && navigation.type === 'reload') {
+        window.location.href = '{% url "home" %}';
+    } else if (performance.navigation && performance.navigation.type === performance.navigation.TYPE_RELOAD) {
+        window.location.href = '{% url "home" %}';
+    }
+})();
+
+function toggleSidebar() {
+    // Sidebar functionality if needed
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const changePasswordBtn = document.getElementById('changePasswordBtn');
+const changePasswordModal = document.getElementById('changePasswordModal');
+const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+const changePasswordForm = document.getElementById('changePasswordForm');
+const changePasswordMessage = document.getElementById('changePasswordMessage');
+const autoOldPassword = "{{ auto_old_password|default:''|escapejs }}";
+
+changePasswordBtn.addEventListener('click', function() {
+    changePasswordMessage.innerHTML = '';
+    changePasswordForm.reset();
+    if (autoOldPassword) {
+        document.getElementById('oldPassword').value = autoOldPassword;
+    }
+    changePasswordModal.style.display = 'flex';
+});
+
+cancelPasswordBtn.addEventListener('click', function() {
+    changePasswordModal.style.display = 'none';
+});
+
+changePasswordModal.addEventListener('click', function(e) {
+    if (e.target === this) {
+        changePasswordModal.style.display = 'none';
+    }
+});
+
+changePasswordForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    changePasswordMessage.innerHTML = '';
+    
+    const formData = new FormData(changePasswordForm);
+    formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+    
+    fetch('{% url "change_password" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            changePasswordMessage.innerHTML = `<div style="background: #d4edda; padding: 15px; border-radius: 10px; border: 2px solid #c3e6cb; color: #155724; text-align: center;">${data.message}</div>`;
+            changePasswordForm.reset();
+            setTimeout(() => {
+                changePasswordModal.style.display = 'none';
+            }, 1500);
+        } else {
+            changePasswordMessage.innerHTML = `<div style="background: #fff5f5; padding: 15px; border-radius: 10px; border: 2px solid #f8d7da; color: #721c24; text-align: center;">${data.error}</div>`;
+        }
+    })
+    .catch(() => {
+        changePasswordMessage.innerHTML = `<div style="background: #fff5f5; padding: 15px; border-radius: 10px; border: 2px solid #f8d7da; color: #721c24; text-align: center;">Something went wrong. Please try again.</div>`;
+    });
+});
+
+function togglePassword(fieldId) {
+    const passwordInput = document.getElementById(fieldId);
+    const eyeIcon = document.getElementById(fieldId + '-eye');
+    const eyeSlashIcon = document.getElementById(fieldId + '-eye-slash');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        if (eyeIcon) eyeIcon.style.display = 'none';
+        if (eyeSlashIcon) eyeSlashIcon.style.display = 'block';
+    } else {
+        passwordInput.type = 'password';
+        if (eyeIcon) eyeIcon.style.display = 'block';
+        if (eyeSlashIcon) eyeSlashIcon.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}
+
